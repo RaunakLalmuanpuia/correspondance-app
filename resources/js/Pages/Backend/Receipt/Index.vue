@@ -4,13 +4,13 @@
             <div>
                 <div class="stitle">Receipts</div>
                 <q-breadcrumbs  class="text-dark">
-                    <q-breadcrumbs-el  icon="dashboard" label="Dashboard" :to="route('dashboard')"/>
-                    <q-breadcrumbs-el label="Receipts" :to="route('receipts.index')"/>
+                    <q-breadcrumbs-el class="cursor-pointer"  icon="dashboard" label="Dashboard" @click="$inertia.get(route('dashboard'))"/>
+                    <q-breadcrumbs-el class="cursor-pointer" label="Receipt" @click="$inertia.get(route('receipts.index'))"/>
                 </q-breadcrumbs>
             </div>
 
             <div class="flex q-gutter-sm">
-                <q-btn @click="$inertia.get(route('receipts.create'))" color="btn-primary" label="New Issue"/>
+                <q-btn @click="$inertia.get(route('receipts.create'))" color="btn-primary" label="New Receipt"/>
             </div>
         </div>
         <br/>
@@ -25,7 +25,7 @@
             :loading="loading"
             :filter="filter"
             binary-state-sort
-            :rows-per-page-options="[1,7,15,30,50]"
+            :rows-per-page-options="[5,10,15,30,50]"
             @request="onRequest"
         >
             <template v-slot:top-right>
@@ -38,6 +38,11 @@
                         <q-icon name="search" />
                     </template>
                 </q-input>
+            </template>
+            <template v-slot:body-cell-s_no="props">
+                <q-td>
+                    {{ (pagination.page - 1) * pagination.rowsPerPage + (props.pageIndex + 1) }}
+                </q-td>
             </template>
             <template v-slot:body-cell-letter_date="props">
                 <q-td>
@@ -88,6 +93,7 @@ defineOptions({layout:BackendLayout})
 const props=defineProps(['canCreate','canEdit','canDelete'])
 
 const columns = [
+    { name: 's_no', align: 'left', label: 'S. No', field: 's_no', sortable: false },
     { name: 'subject', align: 'left', label: 'Subject', field: 'subject', sortable: false },
     { name: 'letter_no', align: 'left', label: 'Letter No', field: 'letter_no', sortable: false },
     { name: 'letter_date', align:'left',label: 'Letter Date', field: 'letter_date', sortable: true },

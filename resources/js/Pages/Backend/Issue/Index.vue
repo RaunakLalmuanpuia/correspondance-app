@@ -4,12 +4,13 @@
             <div>
                 <div class="stitle">Issue</div>
                 <q-breadcrumbs  class="text-dark">
-                    <q-breadcrumbs-el  icon="dashboard" label="Dashboard" :to="route('dashboard')"/>
-                    <q-breadcrumbs-el label="Issues" :to="route('issues.index')"/>
+                    <q-breadcrumbs-el class="cursor-pointer"  icon="dashboard" label="Dashboard" @click="$inertia.get(route('dashboard'))"/>
+                    <q-breadcrumbs-el class="cursor-pointer" label="Issues" @click="$inertia.get(route('issues.index'))"/>
                 </q-breadcrumbs>
             </div>
 
             <div class="flex q-gutter-sm">
+<!--                <q-btn @click="showDialog = true" color="btn-primary" label="New Issue"/>-->
                 <q-btn @click="$inertia.get(route('issues.create'))" color="btn-primary" label="New Issue"/>
             </div>
         </div>
@@ -17,7 +18,6 @@
         <q-table
             flat
             ref="tableRef"
-            title="List of Issues"
             :rows="rows"
             :columns="columns"
             row-key="id"
@@ -25,9 +25,20 @@
             :loading="loading"
             :filter="filter"
             binary-state-sort
-            :rows-per-page-options="[1,7,15,30,50]"
+            :rows-per-page-options="[5,10,15,30,50]"
             @request="onRequest"
         >
+            <template v-slot:top-left>
+                <q-input borderless dense debounce="800"
+                         @update:model-value="handleSearch"
+                         bg-color="grey-2"
+                         outlined
+                         v-model="filter" placeholder="Search">
+                    <template v-slot:append>
+                        <q-icon name="search" />
+                    </template>
+                </q-input>
+            </template>
             <template v-slot:top-right>
                 <q-input borderless dense debounce="800"
                          @update:model-value="handleSearch"
@@ -39,11 +50,55 @@
                     </template>
                 </q-input>
             </template>
+            <template v-slot:body-cell-s_no="props">
+                <q-td>
+                    {{ (pagination.page - 1) * pagination.rowsPerPage + (props.pageIndex + 1) }}
+                </q-td>
+            </template>
+            <template v-slot:body-cell-subject="props">
+                <q-td style="min-width: 200px; max-width: 300px;">
+                    <div class="break-words whitespace-normal">
+                        {{ props.row.subject }}
+                    </div>
+                </q-td>
+            </template>
+
             <template v-slot:body-cell-letter_date="props">
                 <q-td>
                     {{formatDate(props.row.letter_date)}}
                 </q-td>
             </template>
+
+            <template v-slot:body-cell-letter_addressee_main="props">
+                <q-td>
+                    <div class="whitespace-pre break-words">
+                        {{ props.row.letter_addressee_main }}
+                    </div>
+                </q-td>
+            </template>
+
+            <template v-slot:body-cell-letter_addressee_copy_to="props">
+                <q-td>
+                    <div v-if="Array.isArray(props.row.letter_addressee_copy_to)">
+                        <div
+                            v-for="(item, index) in props.row.letter_addressee_copy_to"
+                            :key="index"
+                        >
+                            {{ item }}
+                        </div>
+                    </div>
+
+                    <div v-else>
+                        <div
+                            v-for="(item, index) in parseJson(props.row.letter_addressee_copy_to)"
+                            :key="index"
+                        >
+                            {{ item }}
+                        </div>
+                    </div>
+                </q-td>
+            </template>
+
 
             <template v-slot:body-cell-designated_cell="props">
                 <q-td>
@@ -66,7 +121,7 @@
                             <q-item clickable @click="$inertia.get(route('issues.edit',props.row.id))">
                                 <q-item-section>Edit</q-item-section>
                             </q-item>
-                            <q-item @click="handleDelete(props.row)" :disable="!canDelete">
+                            <q-item clickable @click="handleDelete(props.row)">
                                 <q-item-section>Delete</q-item-section>
                             </q-item>
                         </q-menu>
@@ -75,27 +130,32 @@
 
                 </q-td>
             </template>
-
         </q-table>
+
+
+
+
+
     </q-page>
 </template>
 <script setup>
 import { ref, onMounted } from 'vue'
 import BackendLayout from "@/Layouts/BackendLayout.vue";
 import {date, useQuasar} from "quasar";
-import {router} from "@inertiajs/vue3";
+import {router, useForm} from "@inertiajs/vue3";
 defineOptions({layout:BackendLayout})
-const props=defineProps(['canCreate','canEdit','canDelete'])
+const props=defineProps(['cell','canCreate','canEdit','canDelete'])
 
 const columns = [
-    { name: 'subject', align: 'left', label: 'Subject', field: 'subject', sortable: false },
+    { name: 's_no', align: 'left', label: 'S. No', field: 's_no', sortable: false },
+    { name: 'subject', align: 'left', label: 'Subject', field: 'subject', sortable: false},
     { name: 'letter_no', align: 'left', label: 'Letter No', field: 'letter_no', sortable: false },
-    { name: 'letter_addressee_main', align:'left', label: 'Address(Main)', field: 'letter_addressee_main', sortable: true },
-    { name: 'letter_addressee_copy_to',align:'left', label: 'Address(Copy to)', field: 'letter_addressee_copy_to', sortable: true },
+    { name: 'letter_addressee_main', align:'left', label: 'Address(Main)', field: 'letter_addressee_main', sortable: false },
+    { name: 'letter_addressee_copy_to',align:'left', label: 'Address(Copy to)', field: 'letter_addressee_copy_to', sortable: false },
     { name: 'letter_date', align:'left',label: 'Letter Date', field: 'letter_date', sortable: true },
-    { name: 'designated_cell', align:'left',label: 'Designated Cell', field: 'designated_cell', sortable: true },
+    { name: 'designated_cell', align:'left',label: 'Designated Cell', field: 'designated_cell', sortable: false },
     { name: 'created_at', align:'left',label: 'Issue Date', field: 'created_at', sortable: true },
-    { name: 'action',align:'left', label: 'Action', field: 'action', sortable: true },
+    { name: 'action',align:'left', label: 'Action', field: 'action', sortable: false },
 ]
 
 const q = useQuasar();
@@ -118,13 +178,23 @@ const handleDelete=item=>{
         cancel:'No'
     })
         .onOk(()=>{
-            router.delete(route('issues.destroy',item.id),{
+            router.delete(route('issues.destroy', item.id),{
                 onStart:params => q.loading.show(),
                 onFinish:params => q.loading.hide(),
                 preserveState: false
             })
         })
 }
+
+const parseJson = (value) => {
+    try {
+        const parsed = JSON.parse(value);
+        return Array.isArray(parsed) ? parsed : [parsed];
+    } catch (e) {
+        return value ? [value] : [];
+    }
+};
+
 //
 // const updateTableData = list => {
 //     const {current_page, per_page, data, to, total} = list
@@ -183,6 +253,5 @@ onMounted(() => {
         filter:filter.value
     })
 })
-
 
 </script>

@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cell;
 use App\Models\Issue;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class IssueController extends Controller
 {
     //
     public function index(Request $request)
     {
-
         return inertia('Backend/Issue/Index',[
         ]);
     }
@@ -28,5 +31,79 @@ class IssueController extends Controller
                 ->when($filter,fn(Builder $builder)=>$builder->where('name','LIKE',"%$filter%"))
                 ->paginate($perPage),
         ],200);
+    }
+
+    public function create(Request $request)
+    {
+
+        return inertia('Backend/Issue/Create',[
+            'designated_cells'=>Cell::query()->get(['id as value','name as label']),
+        ]);
+    }
+
+
+
+    public function store(Request $request)
+    {
+
+        $validated=$this->validate($request, [
+            'cell_id'=>['nullable',Rule::exists('cells','id')],
+            'subject' => 'required|string|max:255',
+            'letter_addressee_main' => 'nullable|string',
+            'letter_addressee_copy_to' => 'nullable|array',
+            'letter_no' => 'required|string|unique:issues,letter_no|max:255',
+            'letter_date' => 'nullable|date',
+
+        ]);
+
+
+
+        // ✅ Create issue record
+        $issue = Issue::create([
+            'cell_id' => $request->cell_id,
+            'subject' => $request->subject,
+            'letter_addressee_main' => $request->letter_addressee_main,
+            'letter_addressee_copy_to' => $request->letter_addressee_copy_to ? json_encode($request->letter_addressee_copy_to) : null,
+            'letter_no' => $request->letter_no,
+            'letter_date' => $request->letter_date ? $request->letter_date  : now(),
+        ]);
+
+        return to_route('issues.index');
+    }
+
+    public function edit(Request $request, Issue $model)
+    {
+
+        return inertia('Backend/Issue/Edit', [
+            'data'=>$model->load('cell'),
+            'designated_cells'=>Cell::query()->get(['id as value','name as label']),
+        ]);
+    }
+
+    public function update(Request $request, Issue $model)
+    {
+
+        $validated=$this->validate($request, [
+            'cell_id'=>['nullable',Rule::exists('cells','id')],
+            'subject' => 'required|string|max:255',
+            'letter_addressee_main' => 'nullable|string',
+            'letter_addressee_copy_to' => 'nullable|array',
+            'letter_no' => 'required|string|unique:issues,letter_no|max:255',
+            'letter_date' => 'nullable|date',
+
+        ]);
+        DB::transaction(function () use ($model, $validated) {
+            $model->update($validated);
+        });
+
+        return to_route('issues.index');
+    }
+
+    public function destroy(Request $request, Issue $model)
+    {
+
+        $model->delete();
+
+        return to_route('issues.index');
     }
 }

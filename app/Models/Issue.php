@@ -19,6 +19,9 @@ class Issue extends Model
         'letter_date',
     ];
 
+    protected $casts = [
+        'letter_addressee_copy_to' => 'array',
+    ];
     public function cell(): BelongsTo
     {
         return $this->belongsTo(Cell::class);

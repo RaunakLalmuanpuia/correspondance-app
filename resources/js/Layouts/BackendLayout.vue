@@ -15,7 +15,7 @@
             </template>
 
             <template #nav-links v-if="$q.screen.gt.sm" >
-                <q-btn @click="$inertia.get(route('dashboard'))" class="text-dark sized-btn" color="btn-primary" outline label="Dashboard" no-caps/>
+<!--                <q-btn @click="$inertia.get(route('dashboard'))" class="text-dark sized-btn" color="btn-primary" outline label="Dashboard" no-caps/>-->
 
                 <q-btn @click="$inertia.get(route('issues.index'))" class="text-dark sized-btn" color="btn-primary" outline label="Issue" no-caps/>
 
@@ -58,14 +58,19 @@
             class="bg-white"
         >
             <q-list>
-                <q-item clickable v-close-popup :to="route('dashboard')">
-                    <q-item-section>Dashboard</q-item-section>
+
+                <q-item :key="5451" :active="route().current()==='issues.index'"
+                        active-class="active-menu"
+                        clickable class="default-list" @click="$inertia.get(route('issues.index'))">
+                    <q-item-section avatar><q-icon name="outbox"/></q-item-section>
+                    <q-item-section><q-item-label>Issue</q-item-label></q-item-section>
                 </q-item>
-                <q-item clickable v-close-popup :to="route('issues.index')">
-                    <q-item-section>Issues</q-item-section>
-                </q-item>
-                <q-item clickable v-close-popup :to="route('receipts.index')">
-                    <q-item-section>Receipts</q-item-section>
+
+                <q-item :key="1123" :active="route().current()==='receipts.index' "
+                        active-class="active-menu"
+                        clickable class="default-list" @click="$inertia.get(route('receipts.index'))">
+                    <q-item-section avatar><q-icon name="inbox"/></q-item-section>
+                    <q-item-section><q-item-label>Receipt</q-item-label></q-item-section>
                 </q-item>
             </q-list>
         </q-drawer>
