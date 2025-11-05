@@ -88,7 +88,7 @@ class IssueController extends Controller
             'subject' => 'required|string|max:255',
             'letter_addressee_main' => 'nullable|string',
             'letter_addressee_copy_to' => 'nullable|array',
-            'letter_no' => 'required|string|unique:issues,letter_no|max:255',
+            'letter_no' => 'required',
             'letter_date' => 'nullable|date',
 
         ]);

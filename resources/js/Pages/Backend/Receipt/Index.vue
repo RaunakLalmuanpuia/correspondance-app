@@ -44,9 +44,25 @@
                     {{ (pagination.page - 1) * pagination.rowsPerPage + (props.pageIndex + 1) }}
                 </q-td>
             </template>
+            <template v-slot:body-cell-subject="props">
+                <q-td style="min-width: 300px; max-width: 400px;">
+                    <div class="break-words whitespace-normal">
+                        {{ props.row.subject }}
+                    </div>
+                </q-td>
+            </template>
+
             <template v-slot:body-cell-letter_date="props">
                 <q-td>
                     {{formatDate(props.row.letter_date)}}
+                </q-td>
+            </template>
+
+            <template v-slot:body-cell-received_from="props">
+                <q-td>
+                    <div class="whitespace-pre break-words">
+                        {{ props.row.received_from }}
+                    </div>
                 </q-td>
             </template>
 
@@ -65,13 +81,13 @@
                 <q-td>
                     <q-btn round icon="more_vert">
                         <q-menu>
-                            <q-item clickable @click="$inertia.get(route('receipt.show',props.row.id))">
+                            <q-item clickable @click="$inertia.get(route('receipts.show',props.row.id))">
                                 <q-item-section>View Detail</q-item-section>
                             </q-item>
-                            <q-item clickable @click="$inertia.get(route('receipt.edit',props.row.id))">
+                            <q-item clickable @click="$inertia.get(route('receipts.edit',props.row.id))">
                                 <q-item-section>Edit</q-item-section>
                             </q-item>
-                            <q-item @click="handleDelete(props.row)" :disable="!canDelete">
+                            <q-item clickable @click="handleDelete(props.row)" >
                                 <q-item-section>Delete</q-item-section>
                             </q-item>
                         </q-menu>

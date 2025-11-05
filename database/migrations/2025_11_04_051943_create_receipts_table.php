@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('letter_no')->unique();
             $table->date('letter_date');
             $table->string('received_from');
+            $table->string('name_of_da')->nullable();
             $table->timestamps();
         });
     }

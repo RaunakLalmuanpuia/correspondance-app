@@ -27,6 +27,7 @@ class ReceiptSeeder extends Seeder
                 'letter_no' => 'REC-' . Str::upper(Str::random(6)),
                 'letter_date' => Carbon::now()->subDays(rand(1, 30)),
                 'received_from' => 'Department ' . $i,
+                'name_of_da' => 'DA ' . $i,
             ]);
         }
     }

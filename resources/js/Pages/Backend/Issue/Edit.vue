@@ -1,14 +1,21 @@
 <template>
     <q-page class="container text-center" padding>
+<!--        <div class="flex justify-between items-center" style="max-width: 720px">-->
+<!--            <div>-->
+<!--                <div class="stitle">Edit Issue</div>-->
+<!--            </div>-->
+<!--            <div>-->
+<!--                <q-btn @click="handleDelete" class="sized-btn" color="negative" outline label="Delete"/>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--        <q-separator class="q-my-sm"/>-->
+
         <div class="flex justify-between items-center">
             <div>
-                <div class="text-title">Edit Issue</div>
-            </div>
-            <div>
-                <q-btn @click="handleDelete" class="sized-btn" color="negative" outline label="Delete"/>
+                <div class="stitle">Edit Issue</div>
             </div>
         </div>
-        <q-separator class="q-my-sm"/>
+        <br/>
         <q-form class="row q-col-gutter-sm" style="max-width: 720px" @submit="submit">
             <div class="col-xs-12 col-sm-6">
 
@@ -80,15 +87,30 @@
                          outlined
                 />
             </div>
-            <div class="col-xs-12 mt-2">
+            <div class="col-xs-12 col-sm-6">
                 <q-input v-model="form.letter_no"
                          :error="!!form.errors?.letter_no"
                          :error-message="form.errors?.letter_no?.toString()"
                          :rules="[
-                             val=>!!val || 'Letter No'
+                             val=>!!val || 'Letter No is required'
                          ]"
                          bg-color="white"
                          label="Letter No"
+                         no-error-icon
+                         outlined
+                />
+            </div>
+
+            <div class="col-xs-12 col-sm-6">
+                <q-input v-model="form.letter_date"
+                         :error="!!form.errors?.letter_date"
+                         :error-message="form.errors?.letter_date?.toString()"
+                         :rules="[
+                             val=>!!val || 'Letter Date is required'
+                         ]"
+                         type="date"
+                         bg-color="white"
+                         label="Letter Date"
                          no-error-icon
                          outlined
                 />
@@ -163,7 +185,7 @@ function removeCopyTo(index) {
 const submit = e => {
     form.transform(data => ({cell_id: data?.cell?.value, ...data}))
         .put(route('issues.update',props.data.id), {
-            preserveState: false,
+            preserveState: true,
             onStart: params => state.submitting = true,
             onFinish: params => state.submitting = false
         })

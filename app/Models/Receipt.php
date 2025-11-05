@@ -17,6 +17,7 @@ class Receipt extends Model
         'letter_no',
         'letter_date',
         'received_from',
+        'name_of_da',
     ];
 
     protected $casts = [
