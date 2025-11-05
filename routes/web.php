@@ -6,6 +6,10 @@ use Inertia\Inertia;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\ReceiptController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProfileController;
+
+
 
 
 Route::get('/', function () {
@@ -55,4 +59,23 @@ Route::group(['middleware'=>'auth','prefix' => 'receipts'], function () {
     Route::put('update/{model}', [ReceiptController::class, 'update'])->name('receipts.update');
     Route::get('{model}/show', [ReceiptController::class, 'show'])->name('receipts.show');
     Route::delete('{model}', [ReceiptController::class, 'destroy'])->name('receipts.destroy');
+});
+
+Route::group(['middleware'=>'auth','prefix' => 'user'], function () {
+    Route::get('', [UserController::class, 'index'])->name('user.index');
+    Route::get('json-index', [UserController::class, 'jsonAll'])->name('user.json-index');
+    Route::get('create', [UserController::class, 'create'])->name('user.create');
+    Route::post('store', [UserController::class, 'store'])->name('user.store');
+    Route::get('edit/{model}', [UserController::class, 'edit'])->name('user.edit');
+    Route::put('update/{model}', [UserController::class, 'update'])->name('user.update');
+    Route::get('{model}/show', [UserController::class, 'show'])->name('user.show');
+    Route::delete('{model}', [UserController::class, 'destroy'])->name('user.destroy');
+});
+
+
+Route::group(['middleware'=>'auth','prefix'=>'profile'], function () {
+    Route::get('edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('edit-password', [ProfileController::class, 'editPassword'])->name('profile.edit-password');
+    Route::put('update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
 });

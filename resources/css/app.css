@@ -138,3 +138,7 @@
     border-right-style: solid;
 }
 
+.active-item{
+    color: #306ADB;
+    font-weight: 600;
+}

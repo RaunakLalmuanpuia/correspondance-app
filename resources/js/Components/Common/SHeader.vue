@@ -7,12 +7,13 @@
             <!-- Toolbar Title (Logo + Nav Links) -->
             <q-toolbar-title class="flex items-center gap-8">
                 <!-- Logo -->
-                <q-img
-                    class="cursor-pointer"
-                    @click="$inertia.get(route('dashboard'))"
-                    width="50px"
-                    src="/images/logo.png"
-                />
+                <div class="flex items-center q-gutter-sm cursor-pointer" @click="$inertia.get(route('home'))">
+                    <q-img width="60px" src="/images/logo.png" />
+                    <p v-if="!$page.props.auth?.user && $q.screen.gt.sm" class="text-primary mt-10">MANAGEMENT OF CORRESPONDENCE : E-in-C, PHED</p>
+                </div>
+
+
+
 
 
                 <slot name="nav-links">
