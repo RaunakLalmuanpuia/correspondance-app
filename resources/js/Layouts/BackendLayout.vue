@@ -43,6 +43,7 @@
                         </q-item-section>
                     </q-item>
                     <q-expansion-item
+                        v-if="isAdmin"
                         expand-separator
                         label="Settings"
                     >
@@ -143,7 +144,7 @@
 </template>
 
 <script setup>
-import { reactive} from "vue";
+import { reactive,computed} from "vue";
 
 import SHeader from "@/Components/Common/SHeader.vue";
 import SFooter from "@/Components/Common/SFooter.vue";
@@ -155,5 +156,5 @@ const state = reactive({
 const toggleDrawer = () => {
     state.leftDrawerOpen = !state.leftDrawerOpen;
 };
-
+const isAdmin = computed(() => !!usePage().props.roles?.find(item => item === 'Admin'));
 </script>

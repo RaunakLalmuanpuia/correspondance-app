@@ -9,7 +9,7 @@
                 <!-- Logo -->
                 <div class="flex items-center q-gutter-sm cursor-pointer" @click="$inertia.get(route('home'))">
                     <q-img width="60px" src="/images/logo.png" />
-                    <p v-if="!$page.props.auth?.user && $q.screen.gt.sm" class="text-primary mt-10">MANAGEMENT OF CORRESPONDENCE : E-in-C, PHED</p>
+                    <p v-if="!$page.props.auth?.user && $q.screen.gt.sm" class="text-primary mt-10">CORRESPONDENCE MANAGEMENT : E-in-C, PHED</p>
                 </div>
 
 
@@ -28,7 +28,7 @@
                     <div class="column">
                         <div class="text-dark q-pa-none">{{$page.props.auth?.user?.name}}</div>
                         <div style="font-size: 12px;color: #9b9b9b;margin-top: -6px"
-                             class="text-dark text-caption q-pa-none">{{$page.props.auth?.user?.name}}</div>
+                             class="text-dark text-caption q-pa-none">{{$page.props.auth?.user?.designation}}</div>
                     </div>
                 </q-item-section>
                 <q-item-section side>

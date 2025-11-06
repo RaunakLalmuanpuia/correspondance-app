@@ -8,6 +8,7 @@ use App\Http\Controllers\IssueController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StatisticsController;
 
 
 
@@ -78,4 +79,11 @@ Route::group(['middleware'=>'auth','prefix'=>'profile'], function () {
     Route::put('update', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('edit-password', [ProfileController::class, 'editPassword'])->name('profile.edit-password');
     Route::put('update-password', [ProfileController::class, 'updatePassword'])->name('profile.update-password');
+});
+
+
+Route::group(['middleware'=>'auth','prefix'=>'statistics'], function () {
+    Route::get('stat-cards', [StatisticsController::class, 'statCards'])->name('statCards');
+    Route::get('bar-chart', [StatisticsController::class, 'barChart'])->name('barChart');
+    Route::get('timeline', [StatisticsController::class, 'timeline'])->name('timeline');
 });
