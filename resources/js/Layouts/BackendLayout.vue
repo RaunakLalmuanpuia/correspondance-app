@@ -42,6 +42,7 @@
                             <q-item-label>Go to Dashboard</q-item-label>
                         </q-item-section>
                     </q-item>
+
                     <q-expansion-item
                         v-if="isAdmin"
                         expand-separator
@@ -57,6 +58,12 @@
                         <q-item v-close-popup clickable @click="$inertia.get(route('user.index'))">
                             <q-item-section>
                                 <q-item-label>Users</q-item-label>
+                            </q-item-section>
+                        </q-item>
+
+                        <q-item v-close-popup clickable @click="$inertia.get(route('user.index'))">
+                            <q-item-section>
+                                <q-item-label>Import</q-item-label>
                             </q-item-section>
                         </q-item>
                     </q-expansion-item>
@@ -145,6 +152,7 @@
 
 <script setup>
 import { reactive,computed} from "vue";
+import {usePage} from "@inertiajs/vue3";
 
 import SHeader from "@/Components/Common/SHeader.vue";
 import SFooter from "@/Components/Common/SFooter.vue";
@@ -156,5 +164,6 @@ const state = reactive({
 const toggleDrawer = () => {
     state.leftDrawerOpen = !state.leftDrawerOpen;
 };
+
 const isAdmin = computed(() => !!usePage().props.roles?.find(item => item === 'Admin'));
 </script>

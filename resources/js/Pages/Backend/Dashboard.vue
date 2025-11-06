@@ -8,24 +8,70 @@
                     <q-breadcrumbs-el class="cursor-pointer"  icon="inbox" label="Receipt" @click="$inertia.get(route('receipts.index'))"/>
                 </q-breadcrumbs>
             </div>
+
+            <div class="flex items-center gap-3">
+                <q-select
+                    v-model="selectedMonth"
+                    :options="monthOptions"
+                    label="Select Month"
+                    outlined
+                    dense
+                    style="width: 180px"
+                    emit-value
+                    map-options
+                />
+
+            </div>
         </div>
         <br/>
         <div class="q-pa-md bg-white">
             <div class="mb-8">
-                <p class="text-gray-600 stitle">Overview - November 2025</p>
+                <p class="text-gray-600 stitle">Overview - {{ selectedMonthLabel }}</p>
             </div>
 
-<!--            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">-->
-<!--                <StatCard title="Total Cells" :value="statCards.cells" color="#3b82f6" icon="users" />-->
-<!--                <StatCard title="Total Issues" :value="statCards.issues" color="#8b5cf6" icon="file" />-->
-<!--                <StatCard title="Total Receipts" :value="statCards.receipts" color="#ec4899" icon="mail" />-->
-<!--                <StatCard-->
-<!--                    title="Total Correspondence"-->
-<!--                    :value="statCards.correspondence"-->
-<!--                    color="#10b981"-->
-<!--                    icon="trending-up"-->
-<!--                />-->
-<!--            </div>-->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                    <div class="flex items-center justify-between">
+                        <div style="padding-left: 10px; padding-top: 5px">
+                            <p  class="text-gray-500 text-sm font-medium">Total Correspondance</p>
+                            <p class="text-3xl font-bold mt-2">{{ statCards.correspondence }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                    <div class="flex items-center justify-between">
+                        <div style="padding-left: 10px; padding-top: 5px">
+                            <p  class="text-gray-500 text-sm font-medium">Total Issues</p>
+                            <p class="text-3xl font-bold mt-2">{{ statCards.issues }}</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                    <div class="flex items-center justify-between">
+                        <div style="padding-left: 10px; padding-top: 5px">
+                            <p  class="text-gray-500 text-sm font-medium">Total Receipts</p>
+                            <p class="text-3xl font-bold mt-2">{{ statCards.receipts }}</p>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-500">
+                    <div class="flex items-center justify-between">
+                        <div style="padding-left: 10px; padding-top: 5px">
+                            <p  class="text-gray-500 text-sm font-medium">Total Cell</p>
+                            <p class="text-3xl font-bold mt-2">{{ statCards.cells }}</p>
+                        </div>
+
+                    </div>
+                </div>
+
+
+            </div>
         </div>
         <br>
         <!-- CHARTS ROW 1 -->
@@ -33,7 +79,7 @@
             <!-- BAR CHART -->
 
             <div class="q-pa-md bg-white full-width">
-                <div class="text-lg text-primary text-bold">Issues & Receipts by Cell</div>
+                <div class="text-lg text-primary text-bold">Issues & Receipts by Cell - {{ selectedMonthLabel }}</div>
                 <br />
                 <div class="q-gutter-y-md">
                     <BarChart :chart-data="barChart" :chart-options="defaultOptions" />
@@ -66,13 +112,58 @@
 <script setup>
 import BackendLayout from "@/Layouts/BackendLayout.vue";
 import StatCard from "@/Components/Common/StatCard.vue";
-import { onMounted, computed, ref } from "vue";
+import { onMounted, computed, ref, watch } from "vue";
 import axios from "axios";
 defineOptions({ layout: BackendLayout });
 import { BarChart, LineChart } from "vue-chart-3";
 
+// DROPDOWN OPTIONS (unchanged)
+const monthNames = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+];
+
+const monthOptions = ref([]);
+function generateMonthOptions() {
+    const today = new Date();
+    const options = [];
+    for (let i = 0; i < 12; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        options.push({ label: `${monthNames[d.getMonth()]} ${y}`, value: `${y}-${m}` });
+    }
+    monthOptions.value = options;
+}
+
+// ✅ selectedMonth is a STRING "YYYY-MM" because of emit-value + map-options
+const selectedMonth = ref(null);
+
+// Helpers
+const selectedMonthLabel = computed(() => {
+    if (!selectedMonth.value) return "";
+    const [y, m] = selectedMonth.value.split("-");
+    const date = new Date(Number(y), Number(m) - 1, 1);
+    return date.toLocaleString("en-US", { month: "long", year: "numeric" });
+});
+
+// ✅ Safe month/year computations
+const month = computed(() => {
+    const parts = (selectedMonth.value || "").split("-");
+    return Number(parts[1] || 0);
+});
+const year = computed(() => {
+    const parts = (selectedMonth.value || "").split("-");
+    return Number(parts[0] || 0);
+});
+
 // DATA
-const statCards = ref(null);
+const statCards = ref({
+    cells: 0,
+    issues: 0,
+    receipts: 0,
+    correspondence: 0,
+});
 const barData = ref([]);
 const timelineData = ref([]);
 
@@ -136,23 +227,44 @@ const defaultOptions = {
     maintainAspectRatio: false
 };
 
+// ✅ Called when user clicks Filter button
+function applyFilter() {
+    loadDashboard();
+}
+
+
+// ✅ MAIN FUNCTION TO LOAD DATA
+async function loadDashboard() {
+    try {
+        // Stat Cards
+        const statRes = await axios.get(route('statCards'), {
+            params: { month: month.value, year: year.value }
+        });
+        statCards.value = statRes.data;
+
+        // Bar Chart
+        const barRes = await axios.get(route('barChart'), {
+            params: { month: month.value, year: year.value }
+        });
+        barData.value = barRes.data;
+
+        // Timeline (usually not filtered)
+        const timeRes = await axios.get(route('timeline'));
+        timelineData.value = timeRes.data;
+
+    } catch (err) {
+        console.error("Dashboard Load Error:", err);
+    }
+}
+watch(selectedMonth, loadDashboard);
 // ✅ Load Data
 onMounted(async () => {
     // Stat Cards
-    const statRes = await axios.get(route('statCards'), {
-        params: { month: 11, year: 2025 }
-    });
-    statCards.value = statRes.data;
+    generateMonthOptions();
+    // set default to latest month
+    selectedMonth.value = monthOptions.value[0]?.value || null;
 
-    // Bar Chart
-    const barRes = await axios.get(route('barChart'), {
-        params: { month: 11, year: 2025 }
-    });
-    barData.value = barRes.data;
-
-    // Timeline
-    const timeRes = await axios.get(route('timeline'));
-    timelineData.value = timeRes.data;
+    loadDashboard();
 });
 </script>
 
