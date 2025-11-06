@@ -4,8 +4,8 @@
             <div>
                 <div class="stitle">User Accounts</div>
                 <q-breadcrumbs  class="text-dark">
-                    <q-breadcrumbs-el  icon="dashboard" label="Dashboard" :to="route('dashboard')"/>
-                    <q-breadcrumbs-el label="User Accounts" :to="route('user.index')"/>
+                    <q-breadcrumbs-el class="cursor-pointer"  icon="dashboard" label="Dashboard" @click="$inertia.get(route('dashboard'))"/>
+                    <q-breadcrumbs-el class="cursor-pointer" label="User Accounts" @click="$inertia.get(route('user.index'))"/>
                 </q-breadcrumbs>
             </div>
 
@@ -54,7 +54,7 @@
                             <q-item clickable @click="$inertia.get(route('user.edit',props.row.id))">
                                 <q-item-section>Edit</q-item-section>
                             </q-item>
-                            <q-item @click="handleDelete(props.row)">
+                            <q-item clickable @click="handleDelete(props.row)">
                                 <q-item-section>Delete</q-item-section>
                             </q-item>
                         </q-menu>
@@ -77,7 +77,6 @@ const props=defineProps(['canCreate','canEdit','canDelete'])
 const columns = [
     { name: 'name', align: 'left', label: 'Name', field: 'name', sortable: false },
     { name: 'designation', align: 'left', label: 'Designation', field: 'designation', sortable: false },
-    { name: 'mobile', align:'left', label: 'Mobile', field: 'mobile', sortable: true },
     { name: 'email',align:'left', label: 'Email', field: 'email', sortable: true },
     { name: 'role', align:'left',label: 'Role', field: 'role', sortable: true },
     { name: 'action',align:'left', label: 'Action', field: 'action', sortable: true },

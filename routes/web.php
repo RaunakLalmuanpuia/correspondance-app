@@ -38,38 +38,38 @@ Route::middleware([
 
 
 Route::group(['middleware'=>'auth','prefix' => 'issues'], function () {
-    Route::get('', [IssueController::class, 'index'])->name('issues.index');
-    Route::get('json-index', [IssueController::class, 'jsonAll'])->name('issues.json-index');
-    Route::get('create', [IssueController::class, 'create'])->name('issues.create');
-    Route::post('store', [IssueController::class, 'store'])->name('issues.store');
-    Route::get('edit/{model}', [IssueController::class, 'edit'])->name('issues.edit');
-    Route::put('update/{model}', [IssueController::class, 'update'])->name('issues.update');
-    Route::get('{model}/show', [IssueController::class, 'show'])->name('issues.show');
-    Route::delete('{model}', [IssueController::class, 'destroy'])->name('issues.destroy');
+    Route::get('', [IssueController::class, 'index'])->middleware('can:view-issue')->name('issues.index');
+    Route::get('json-index', [IssueController::class, 'jsonAll'])->middleware('can:view-issue')->name('issues.json-index');
+    Route::get('create', [IssueController::class, 'create'])->middleware('can:create-issue')->name('issues.create');
+    Route::post('store', [IssueController::class, 'store'])->middleware('can:create-issue')->name('issues.store');
+    Route::get('edit/{model}', [IssueController::class, 'edit'])->middleware('can:edit-issue')->name('issues.edit');
+    Route::put('update/{model}', [IssueController::class, 'update'])->middleware('can:edit-issue')->name('issues.update');
+    Route::get('{model}/show', [IssueController::class, 'show'])->middleware('can:view-issue')->name('issues.show');
+    Route::delete('{model}', [IssueController::class, 'destroy'])->middleware('can:delete-issue')->name('issues.destroy');
 });
 
 
 
 Route::group(['middleware'=>'auth','prefix' => 'receipts'], function () {
-    Route::get('', [ReceiptController::class, 'index'])->name('receipts.index');
-    Route::get('json-index', [ReceiptController::class, 'jsonAll'])->name('receipts.json-index');
-    Route::get('create', [ReceiptController::class, 'create'])->name('receipts.create');
-    Route::post('store', [ReceiptController::class, 'store'])->name('receipts.store');
-    Route::get('edit/{model}', [ReceiptController::class, 'edit'])->name('receipts.edit');
-    Route::put('update/{model}', [ReceiptController::class, 'update'])->name('receipts.update');
-    Route::get('{model}/show', [ReceiptController::class, 'show'])->name('receipts.show');
-    Route::delete('{model}', [ReceiptController::class, 'destroy'])->name('receipts.destroy');
+    Route::get('', [ReceiptController::class, 'index'])->middleware('can:view-receipt')->name('receipts.index');
+    Route::get('json-index', [ReceiptController::class, 'jsonAll'])->middleware('can:view-receipt')->name('receipts.json-index');
+    Route::get('create', [ReceiptController::class, 'create'])->middleware('can:create-receipt')->name('receipts.create');
+    Route::post('store', [ReceiptController::class, 'store'])->middleware('can:create-receipt')->name('receipts.store');
+    Route::get('edit/{model}', [ReceiptController::class, 'edit'])->middleware('can:edit-receipt')->name('receipts.edit');
+    Route::put('update/{model}', [ReceiptController::class, 'update'])->middleware('can:edit-receipt')->name('receipts.update');
+    Route::get('{model}/show', [ReceiptController::class, 'show'])->middleware('can:view-receipt')->name('receipts.show');
+    Route::delete('{model}', [ReceiptController::class, 'destroy'])->middleware('can:delete-receipt')->name('receipts.destroy');
 });
 
 Route::group(['middleware'=>'auth','prefix' => 'user'], function () {
-    Route::get('', [UserController::class, 'index'])->name('user.index');
-    Route::get('json-index', [UserController::class, 'jsonAll'])->name('user.json-index');
-    Route::get('create', [UserController::class, 'create'])->name('user.create');
-    Route::post('store', [UserController::class, 'store'])->name('user.store');
-    Route::get('edit/{model}', [UserController::class, 'edit'])->name('user.edit');
-    Route::put('update/{model}', [UserController::class, 'update'])->name('user.update');
-    Route::get('{model}/show', [UserController::class, 'show'])->name('user.show');
-    Route::delete('{model}', [UserController::class, 'destroy'])->name('user.destroy');
+    Route::get('', [UserController::class, 'index'])->middleware('can:view-user')->name('user.index');
+    Route::get('json-index', [UserController::class, 'jsonAll'])->middleware('can:view-user')->name('user.json-index');
+    Route::get('create', [UserController::class, 'create'])->middleware('can:create-user')->name('user.create');
+    Route::post('store', [UserController::class, 'store'])->middleware('can:create-user')->name('user.store');
+    Route::get('edit/{model}', [UserController::class, 'edit'])->middleware('can:edit-user')->name('user.edit');
+    Route::put('update/{model}', [UserController::class, 'update'])->middleware('can:edit-user')->name('user.update');
+    Route::get('{model}/show', [UserController::class, 'show'])->middleware('can:view-user')->name('user.show');
+    Route::delete('{model}', [UserController::class, 'destroy'])->middleware('can:delete-user')->name('user.destroy');
 });
 
 

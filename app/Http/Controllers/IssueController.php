@@ -16,12 +16,17 @@ class IssueController extends Controller
     //
     public function index(Request $request)
     {
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('view-issue'),403,'Access Denied');
         return inertia('Backend/Issue/Index',[
         ]);
     }
 
     public function jsonAll(Request $request)
     {
+
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('view-issue'),403,'Access Denied');
 
         $perPage = $request->get('rowsPerPage') ?? 15;
         $filter = $request->get('filter');
@@ -36,6 +41,9 @@ class IssueController extends Controller
     public function create(Request $request)
     {
 
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('create-issue'),403,'Access Denied');
+
         return inertia('Backend/Issue/Create',[
             'designated_cells'=>Cell::query()->get(['id as value','name as label']),
         ]);
@@ -45,6 +53,9 @@ class IssueController extends Controller
 
     public function store(Request $request)
     {
+
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('create-issue'),403,'Access Denied');
 
         $validated=$this->validate($request, [
             'cell_id'=>['nullable',Rule::exists('cells','id')],
@@ -74,6 +85,9 @@ class IssueController extends Controller
     public function edit(Request $request, Issue $model)
     {
 
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('edit-issue'),403,'Access Denied');
+
         return inertia('Backend/Issue/Edit', [
             'data'=>$model->load('cell'),
             'designated_cells'=>Cell::query()->get(['id as value','name as label']),
@@ -82,6 +96,9 @@ class IssueController extends Controller
 
     public function update(Request $request, Issue $model)
     {
+
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('edit-issue'),403,'Access Denied');
 
         $validated=$this->validate($request, [
             'cell_id'=>['nullable',Rule::exists('cells','id')],
@@ -102,8 +119,12 @@ class IssueController extends Controller
     public function destroy(Request $request, Issue $model)
     {
 
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('delete-issue'),403,'Access Denied');
+
         $model->delete();
 
         return to_route('issues.index');
     }
+
 }

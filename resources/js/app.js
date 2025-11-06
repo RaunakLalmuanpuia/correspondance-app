@@ -1,6 +1,6 @@
 import './bootstrap';
 import '../css/app.css';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
+// import '@vueup/vue-quill/dist/vue-quill.snow.css';
 
 // Import icon libraries
 import '@quasar/extras/material-icons/material-icons.css'
@@ -14,7 +14,7 @@ import { createApp, h } from 'vue'
 import { createInertiaApp } from '@inertiajs/vue3'
 import {ZiggyVue} from "../../vendor/tightenco/ziggy/dist"
 import { Dialog, Loading, Notify, Quasar } from "quasar";
-import { QuillEditor } from '@vueup/vue-quill'
+// import { QuillEditor } from '@vueup/vue-quill'
 
 const appName = import.meta.env.VITE_APP_NAME || 'PHED';
 
@@ -31,7 +31,7 @@ createInertiaApp({
             .use(Quasar,{
                 plugins:{Notify,Dialog,Loading}
             })
-            .component('QuillEditor',QuillEditor)
+            // .component('QuillEditor',QuillEditor)
             .mount(el)
     },
     progress: {

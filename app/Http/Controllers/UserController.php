@@ -16,12 +16,18 @@ class UserController extends Controller
     //
     public function index(Request $request)
     {
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('view-user'),403,'Access Denied');
+
         return inertia('Backend/User/Index',[
         ]);
     }
 
     public function jsonAll(Request $request)
     {
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('view-user'),403,'Access Denied');
+
 
         $perPage = $request->get('rowsPerPage') ?? 15;
         $filter = $request->get('filter');
@@ -36,6 +42,10 @@ class UserController extends Controller
     public function create(Request $request)
     {
 
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('create-user'),403,'Access Denied');
+
+
         return inertia('Backend/User/Create',[
             'userRoles'=>Role::query()->get(['name as value','name as label'])
         ]);
@@ -43,6 +53,10 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
+
+        $user = auth()->user();
+        abort_if(!$user->hasPermissionTo('create-user'),403,'Access Denied');
+
 
         $data=$this->validate($request, [
             'name'=>'required',
@@ -64,6 +78,10 @@ class UserController extends Controller
 
     public function edit(Request $request,User $model)
     {
+        $user = auth()->user();
+        abort_if(!$user->hasPermissionTo('edit-user'),403,'Access Denied');
+
+
         return inertia('Backend/User/Edit', [
             'userRoles' => Role::query()->get(['name as value', 'name as label']),
             'data' => $model->load(['roles'])
@@ -73,6 +91,10 @@ class UserController extends Controller
 
     public function update(Request $request, User $model)
     {
+
+        $user = auth()->user();
+        abort_if(!$user->hasPermissionTo('edit-user'),403,'Access Denied');
+
 
         $data=$this->validate($request, [
             'name'=>'required',
@@ -106,6 +128,8 @@ class UserController extends Controller
 
     public function destroy(Request $request,User $model)
     {
+        $user = auth()->user();
+        abort_if(!$user->hasPermissionTo('delete-user'),403,'Access Denied');
 
         $model->delete();
 

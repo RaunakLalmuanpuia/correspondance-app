@@ -28,7 +28,6 @@ class ProfileController extends Controller
         $data=$this->validate($request,[
             'name' => ['required'],
             'email'=>['required',Rule::unique('users','email')->ignore(\auth()->id())],
-            'mobile'=>['required','digits:10',Rule::unique('users','mobile')->ignore(\auth()->id())],
             'designation'=>['nullable','string'],
         ]);
         $request->user()->update($data);

@@ -45,7 +45,6 @@
                     <q-expansion-item
                         expand-separator
                         label="Settings"
-                        header-class="text-primary"
                     >
                         <q-separator/>
                         <q-item v-close-popup clickable @click="$inertia.get(route('profile.edit'))">

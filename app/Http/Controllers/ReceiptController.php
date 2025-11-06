@@ -14,6 +14,9 @@ class ReceiptController extends Controller
     //
     public function index(Request $request)
     {
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('view-receipt'),403,'Access Denied');
+
 
         return inertia('Backend/Receipt/Index',[
         ]);
@@ -21,6 +24,11 @@ class ReceiptController extends Controller
 
     public function jsonAll(Request $request)
     {
+
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('view-receipt'),403,'Access Denied');
+
+
 
         $perPage = $request->get('rowsPerPage') ?? 15;
         $filter = $request->get('filter');
@@ -35,6 +43,10 @@ class ReceiptController extends Controller
     public function create(Request $request)
     {
 
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('create-receipt'),403,'Access Denied');
+
+
         return inertia('Backend/Receipt/Create',[
             'designated_cells'=>Cell::query()->get(['id as value','name as label']),
         ]);
@@ -42,6 +54,10 @@ class ReceiptController extends Controller
 
     public function store(Request $request)
     {
+
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('create-receipt'),403,'Access Denied');
+
 
         $validated=$this->validate($request, [
 
@@ -72,6 +88,10 @@ class ReceiptController extends Controller
     public function edit(Request $request, Receipt $model)
     {
 
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('edit-receipt'),403,'Access Denied');
+
+
         return inertia('Backend/Receipt/Edit', [
             'data'=>$model->load('cell'),
             'designated_cells'=>Cell::query()->get(['id as value','name as label']),
@@ -80,6 +100,10 @@ class ReceiptController extends Controller
 
     public function update(Request $request, Receipt $model)
     {
+
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('edit-receipt'),403,'Access Denied');
+
 
         $validated=$this->validate($request, [
             'subject' => 'required|string|max:255',
@@ -99,6 +123,10 @@ class ReceiptController extends Controller
 
     public function destroy(Request $request, Receipt $model)
     {
+
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('delete-receipt'),403,'Access Denied');
+
 
         $model->delete();
 

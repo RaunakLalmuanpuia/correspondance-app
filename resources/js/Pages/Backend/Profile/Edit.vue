@@ -22,13 +22,13 @@
                      ]"
                 />
 
-                <q-input v-model="form.mobile"
+                <q-input v-model="form.designation"
                          outlined
-                         label="Mobile"
-                         :error="!!form?.errors?.mobile"
-                         :error-message="form?.errors?.mobile?.toString()"
+                         label="Designation"
+                         :error="!!form?.errors?.designation"
+                         :error-message="form?.errors?.designation?.toString()"
                          :rules="[
-                         val=>!!val || 'Mobile is required'
+                         val=>!!val || 'Designation is required'
                      ]"
                 />
 
@@ -63,12 +63,13 @@ defineOptions({
 const q = useQuasar();
 const form=useForm({
     name:usePage().props.auth?.user?.name,
-    mobile:usePage().props.auth?.user?.mobile,
+    designation:usePage().props.auth?.user?.designation,
     email:usePage().props.auth?.user?.email
 })
 
 const handleSubmit=e=>{
     form.put(route('profile.update'),{
+        preserveState:true,
         onStart: params => q.loading.show({
             boxClass: 'bg-grey-2 text-grey-9',
             spinnerColor: 'primary', message: 'Updating Profile...'
