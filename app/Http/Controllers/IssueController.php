@@ -10,7 +10,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-
+use App\Imports\IssueImport;
+use Maatwebsite\Excel\Facades\Excel;
 class IssueController extends Controller
 {
     //
@@ -126,5 +127,27 @@ class IssueController extends Controller
 
         return to_route('issues.index');
     }
+
+
+    public function import(Request $request)
+    {
+//        $user = $request->user();
+//        abort_if(!$user->hasPermissionTo('view-issue'),403,'Access Denied');
+        return inertia('Backend/Issue/Import',[
+        ]);
+    }
+
+    public function importIssue(Request $request)
+    {
+
+        $request->validate([
+            'document' => 'required|file|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new IssueImport, $request->file('document'));
+
+        return back()->with('success', 'Issues imported successfully.');
+    }
+
 
 }

@@ -24,8 +24,8 @@ class DatabaseSeeder extends Seeder
             RolesAndPermissionsSeeder::class,
             UserSeeder::class,
             CellSeeder::class,
-            IssueSeeder::class,
-            ReceiptSeeder::class,
+//            IssueSeeder::class,
+//            ReceiptSeeder::class,
         ]);
     }
 }

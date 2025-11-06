@@ -102,7 +102,7 @@
 
             <template v-slot:body-cell-designated_cell="props">
                 <q-td>
-                    <q-chip :label="props.row?.cell.name" square/>
+                    <q-chip :label="props.row?.cell?.name" square/>
                 </q-td>
             </template>
 
@@ -126,7 +126,6 @@
                             </q-item>
                         </q-menu>
                     </q-btn>
-
 
                 </q-td>
             </template>

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('receipts', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\Cell::class);
+            $table->foreignIdFor(\App\Models\Cell::class)->nullable()->constrained();
             $table->string('subject');
             $table->string('letter_no')->unique();
             $table->date('letter_date');

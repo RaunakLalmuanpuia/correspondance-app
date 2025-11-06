@@ -47,6 +47,10 @@ Route::group(['middleware'=>'auth','prefix' => 'issues'], function () {
     Route::put('update/{model}', [IssueController::class, 'update'])->middleware('can:edit-issue')->name('issues.update');
     Route::get('{model}/show', [IssueController::class, 'show'])->middleware('can:view-issue')->name('issues.show');
     Route::delete('{model}', [IssueController::class, 'destroy'])->middleware('can:delete-issue')->name('issues.destroy');
+
+    Route::get('/import', [IssueController::class, 'import'])->name('issues.import');
+    Route::post('/import-issue', [IssueController::class, 'importIssue'])->name('issues.import-issue');
+
 });
 
 
