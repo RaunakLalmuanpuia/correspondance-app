@@ -36,13 +36,15 @@ class IssueImport implements OnEachRow, WithHeadingRow
         // ✅ Address Main
         $addressMain = $r['addressmain'] ?? null;
 
-        // ✅ Address Copy to (split by comma)
-        $copyTo = null;
-        if (!empty($r['addresscopy_to'])) {
-            $arr = preg_split("/,|\r\n|\n|\r/", $r['addresscopy_to']);
-            $arr = array_filter(array_map('trim', $arr));
-            $copyTo = json_encode($arr);
-        }
+        $copyTo = $r['addresscopy_to'] ?? null;
+
+//        // ✅ Address Copy to (split by comma)
+//        $copyTo = null;
+//        if (!empty($r['addresscopy_to'])) {
+//            $arr = preg_split("/,|\r\n|\n|\r/", $r['addresscopy_to']);
+//            $arr = array_filter(array_map('trim', $arr));
+//            $copyTo = json_encode($arr);
+//        }
 
         // ✅ Letter Date (Excel serial number → real date)
         $letterDate = null;

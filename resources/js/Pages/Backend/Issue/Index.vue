@@ -79,25 +79,33 @@
 
             <template v-slot:body-cell-letter_addressee_copy_to="props">
                 <q-td>
-                    <div v-if="Array.isArray(props.row.letter_addressee_copy_to)">
-                        <div
-                            v-for="(item, index) in props.row.letter_addressee_copy_to"
-                            :key="index"
-                        >
-                            {{ item }}
-                        </div>
-                    </div>
-
-                    <div v-else>
-                        <div
-                            v-for="(item, index) in parseJson(props.row.letter_addressee_copy_to)"
-                            :key="index"
-                        >
-                            {{ item }}
-                        </div>
+                    <div class="whitespace-pre break-words">
+                        {{ props.row.letter_addressee_copy_to }}
                     </div>
                 </q-td>
             </template>
+
+<!--            <template v-slot:body-cell-letter_addressee_copy_to="props">-->
+<!--                <q-td>-->
+<!--                    <div v-if="Array.isArray(props.row.letter_addressee_copy_to)">-->
+<!--                        <div-->
+<!--                            v-for="(item, index) in props.row.letter_addressee_copy_to"-->
+<!--                            :key="index"-->
+<!--                        >-->
+<!--                            {{ item }}-->
+<!--                        </div>-->
+<!--                    </div>-->
+
+<!--                    <div v-else>-->
+<!--                        <div-->
+<!--                            v-for="(item, index) in parseJson(props.row.letter_addressee_copy_to)"-->
+<!--                            :key="index"-->
+<!--                        >-->
+<!--                            {{ item }}-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </q-td>-->
+<!--            </template>-->
 
 
             <template v-slot:body-cell-designated_cell="props">
@@ -194,14 +202,8 @@ const parseJson = (value) => {
     }
 };
 
-//
-// const updateTableData = list => {
-//     const {current_page, per_page, data, to, total} = list
-//     tableData.data = data;
-//     tableData.pagination.rowsNumber = total;
-//     tableData.pagination.page = current_page;
-//     tableData.pagination.rowsPerPage = per_page;
-// }
+
+
 
 const handleSearch=val=>{
     onRequest({pagination:pagination.value,filter:val})

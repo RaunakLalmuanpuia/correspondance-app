@@ -62,7 +62,7 @@ class IssueController extends Controller
             'cell_id'=>['nullable',Rule::exists('cells','id')],
             'subject' => 'required|string|max:255',
             'letter_addressee_main' => 'nullable|string',
-            'letter_addressee_copy_to' => 'nullable|array',
+            'letter_addressee_copy_to' => 'nullable|string',
             'letter_no' => 'required|string|unique:issues,letter_no|max:255',
             'letter_date' => 'nullable|date',
 
@@ -75,9 +75,9 @@ class IssueController extends Controller
             'cell_id' => $request->cell_id,
             'subject' => $request->subject,
             'letter_addressee_main' => $request->letter_addressee_main,
-            'letter_addressee_copy_to' => $request->letter_addressee_copy_to ? json_encode($request->letter_addressee_copy_to) : null,
+            'letter_addressee_copy_to' => $request->letter_addressee_copy_to,
             'letter_no' => $request->letter_no,
-            'letter_date' => $request->letter_date ? $request->letter_date  : now(),
+            'letter_date' => $request->letter_date,
         ]);
 
         return to_route('issues.index');
@@ -105,7 +105,7 @@ class IssueController extends Controller
             'cell_id'=>['nullable',Rule::exists('cells','id')],
             'subject' => 'required|string|max:255',
             'letter_addressee_main' => 'nullable|string',
-            'letter_addressee_copy_to' => 'nullable|array',
+            'letter_addressee_copy_to' => 'nullable|string',
             'letter_no' => 'required',
             'letter_date' => 'nullable|date',
 

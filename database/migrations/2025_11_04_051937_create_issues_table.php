@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(\App\Models\Cell::class)->nullable()->constrained();
             $table->longText('subject')->nullable();
-            $table->string('letter_addressee_main')->nullable();
-            $table->json('letter_addressee_copy_to')->nullable();
+            $table->longText('letter_addressee_main')->nullable();
+            $table->longText('letter_addressee_copy_to')->nullable();
             $table->string('letter_no')->nullable();
             $table->date('letter_date')->nullable();
             $table->timestamps();

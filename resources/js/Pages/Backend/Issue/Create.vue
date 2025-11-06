@@ -27,43 +27,58 @@
             </div>
             <!-- Letter Addressee (Copy-to) Section -->
             <div class="col-xs-12 col-sm-6">
-                <q-input
-                    v-model="newCopyTo"
-                    label="Letter Addressee (Copy-to)"
-                    bg-color="white"
-                    outlined
-                    @keyup.enter="addCopyTo"
-                >
-                    <template v-slot:append>
-                        <q-btn
-                            flat
-                            dense
-                            icon="add"
-                            color="primary"
-                            @click="addCopyTo"
-                        />
-                    </template>
-                </q-input>
 
-                <!-- Display added items -->
-                <div class="q-mt-sm flex flex-wrap gap-2">
-                    <q-chip
-                        v-for="(item, index) in form.letter_addressee_copy_to"
-                        :key="index"
-                        removable
-                        color="primary"
-                        text-color="white"
-                        @remove="removeCopyTo(index)"
-                        class="q-ma-xs"
-                    >
-                        {{ item }}
-                    </q-chip>
-                </div>
+                <q-input v-model="form.letter_addressee_copy_to"
+                         :error="!!form.errors?.letter_addressee_copy_to"
+                         :error-message="form.errors?.letter_addressee_copy_to?.toString()"
+                         :rules="[
+                             val=>!!val || 'Letter Addressee (Copy-to)'
+                         ]"
+                         autogrow
+                         type="textarea"
+                         bg-color="white"
+                         label="Letter Addressee (Copy-to)"
+                         no-error-icon
+                         outlined
+                />
 
-                <!-- Validation Error -->
-                <div v-if="form.errors?.letter_addressee_copy_to" class="text-negative text-caption q-mt-xs">
-                    {{ form.errors.letter_addressee_copy_to.toString() }}
-                </div>
+<!--                <q-input-->
+<!--                    v-model="newCopyTo"-->
+<!--                    label="Letter Addressee (Copy-to)"-->
+<!--                    bg-color="white"-->
+<!--                    outlined-->
+<!--                    @keyup.enter="addCopyTo"-->
+<!--                >-->
+<!--                    <template v-slot:append>-->
+<!--                        <q-btn-->
+<!--                            flat-->
+<!--                            dense-->
+<!--                            icon="add"-->
+<!--                            color="primary"-->
+<!--                            @click="addCopyTo"-->
+<!--                        />-->
+<!--                    </template>-->
+<!--                </q-input>-->
+
+<!--                &lt;!&ndash; Display added items &ndash;&gt;-->
+<!--                <div class="q-mt-sm flex flex-wrap gap-2">-->
+<!--                    <q-chip-->
+<!--                        v-for="(item, index) in form.letter_addressee_copy_to"-->
+<!--                        :key="index"-->
+<!--                        removable-->
+<!--                        color="primary"-->
+<!--                        text-color="white"-->
+<!--                        @remove="removeCopyTo(index)"-->
+<!--                        class="q-ma-xs"-->
+<!--                    >-->
+<!--                        {{ item }}-->
+<!--                    </q-chip>-->
+<!--                </div>-->
+
+<!--                &lt;!&ndash; Validation Error &ndash;&gt;-->
+<!--                <div v-if="form.errors?.letter_addressee_copy_to" class="text-negative text-caption q-mt-xs">-->
+<!--                    {{ form.errors.letter_addressee_copy_to.toString() }}-->
+<!--                </div>-->
             </div>
             <div class="col-xs-12">
                 <q-input v-model="form.subject"
@@ -143,25 +158,25 @@ const state = reactive({
 })
 const form = useForm({
     letter_addressee_main: '',
-    letter_addressee_copy_to: [],
+    letter_addressee_copy_to: '',
     subject: '',
     letter_no: '',
     letter_date: '',
     cell: null,
 
 });
-
-const newCopyTo = ref('')
-function addCopyTo() {
-    const value = newCopyTo.value.trim()
-    if (value && !form.letter_addressee_copy_to.includes(value)) {
-        form.letter_addressee_copy_to.push(value)
-    }
-    newCopyTo.value = ''
-}
-function removeCopyTo(index) {
-    form.letter_addressee_copy_to.splice(index, 1)
-}
+//
+// const newCopyTo = ref('')
+// function addCopyTo() {
+//     const value = newCopyTo.value.trim()
+//     if (value && !form.letter_addressee_copy_to.includes(value)) {
+//         form.letter_addressee_copy_to.push(value)
+//     }
+//     newCopyTo.value = ''
+// }
+// function removeCopyTo(index) {
+//     form.letter_addressee_copy_to.splice(index, 1)
+// }
 const submit = e => {
     form.transform(data => ({cell_id: data?.cell?.value, ...data}))
         .post(route('issues.store'), {
