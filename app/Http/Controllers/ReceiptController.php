@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ReceiptImport;
 use App\Models\Cell;
 use App\Models\Receipt;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ReceiptController extends Controller
 {
@@ -132,4 +134,25 @@ class ReceiptController extends Controller
 
         return to_route('receipts.index');
     }
+
+    public function import(Request $request)
+    {
+//        $user = $request->user();
+//        abort_if(!$user->hasPermissionTo('view-issue'),403,'Access Denied');
+        return inertia('Backend/Receipt/Import',[
+        ]);
+    }
+
+    public function importReceipt(Request $request)
+    {
+
+        $request->validate([
+            'document' => 'required|file|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new ReceiptImport, $request->file('document'));
+
+        return back()->with('success', 'Receipt imported successfully.');
+    }
+
 }

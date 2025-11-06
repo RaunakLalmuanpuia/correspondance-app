@@ -2,20 +2,21 @@
 
 namespace App\Imports;
 
-use App\Models\Issue;
+use App\Models\Receipt;
 use App\Models\Cell;
 use Carbon\Carbon;
 use Maatwebsite\Excel\Concerns\OnEachRow;
-use Maatwebsite\Excel\Row;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Row;
 
-class IssueImport implements OnEachRow, WithHeadingRow
+class ReceiptImport implements OnEachRow, WithHeadingRow
 {
     public function onRow(Row $row)
     {
+
         $r = $row->toArray();
 
-        // ✅ Get cell id
+        // ✅ Convert Designated Cell → cell_id
         $cellId = null;
         if (!empty($r['designated_cell'])) {
 
@@ -33,48 +34,34 @@ class IssueImport implements OnEachRow, WithHeadingRow
         }
 
 
-        // ✅ Address Main
-        $addressMain = $r['addressmain'] ?? null;
+        // ✅ Parse Letter Date
+        $letterDate = $this->parseDate($r['letter_date'] ?? null);
 
-        // ✅ Address Copy to (split by comma)
-        $copyTo = null;
-        if (!empty($r['addresscopy_to'])) {
-            $arr = preg_split("/,|\r\n|\n|\r/", $r['addresscopy_to']);
-            $arr = array_filter(array_map('trim', $arr));
-            $copyTo = json_encode($arr);
-        }
+        // ✅ Parse Received Date → created_at
+        $receivedAt = $this->parseDateTime($r['received_date'] ?? null) ?? now();
 
-        // ✅ Letter Date (Excel serial number → real date)
-        $letterDate = null;
-        if (!empty($r['letter_date'])) {
-            try {
-                // Excel date serialization
-                $letterDate = $this->parseDate($r['letter_date'] ?? null);
 
-            } catch (\Exception $e) {}
-        }
 
-        // ✅ Issue Date → created_at
-        $createdAt = now();
-        if (!empty($r['issue_date'])) {
-            try {
-                $createdAt = $this->parseDate($r['issue_date'] ?? null) ?? now();
-            } catch (\Exception $e) {}
-        }
-
-        // ✅ Create Issue
-        Issue::create([
-            'cell_id'                   => $cellId,
-            'subject'                   => $r['subject'] ?? null,
-            'letter_addressee_main'     => $addressMain,
-            'letter_addressee_copy_to'  => $copyTo,
-            'letter_no'                 => $r['letter_no'] ?? null,
-            'letter_date'               => $letterDate,
-            'created_at'                => $createdAt,
-            'updated_at'                => now()
+        // ✅ Create receipt
+        Receipt::create([
+            'cell_id'       => $cellId,
+            'subject'       => $r['subject'] ?? null,
+            'letter_no'     => $r['letter_no'] ?? null,
+            'letter_date'   => $letterDate,
+            'received_from' => $r['received_from'] ?? null,
+            'name_of_da'    => $r['name_of_da'] ?? null,
+            'created_at'    => $receivedAt,
+            'updated_at'    => now(),
         ]);
     }
 
+    /**
+     * ✅ Universal parser – handles:
+     * - Excel serial numbers
+     * - d/m/Y H:i
+     * - d/m/Y h:i A
+     * - normal dates
+     */
     private function parseDate($value)
     {
         if (empty(trim($value))) {
@@ -150,5 +137,4 @@ class IssueImport implements OnEachRow, WithHeadingRow
             return null;
         }
     }
-
 }

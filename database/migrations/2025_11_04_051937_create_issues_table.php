@@ -17,7 +17,7 @@ return new class extends Migration
             $table->longText('subject')->nullable();
             $table->string('letter_addressee_main')->nullable();
             $table->json('letter_addressee_copy_to')->nullable();
-            $table->string('letter_no')->nullable()->unique();
+            $table->string('letter_no')->nullable();
             $table->date('letter_date')->nullable();
             $table->timestamps();
         });

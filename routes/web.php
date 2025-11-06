@@ -64,6 +64,9 @@ Route::group(['middleware'=>'auth','prefix' => 'receipts'], function () {
     Route::put('update/{model}', [ReceiptController::class, 'update'])->middleware('can:edit-receipt')->name('receipts.update');
     Route::get('{model}/show', [ReceiptController::class, 'show'])->middleware('can:view-receipt')->name('receipts.show');
     Route::delete('{model}', [ReceiptController::class, 'destroy'])->middleware('can:delete-receipt')->name('receipts.destroy');
+
+    Route::get('/import', [ReceiptController::class, 'import'])->name('receipts.import');
+    Route::post('/import-receipt', [ReceiptController::class, 'importReceipt'])->name('receipts.import-receipt');
 });
 
 Route::group(['middleware'=>'auth','prefix' => 'user'], function () {

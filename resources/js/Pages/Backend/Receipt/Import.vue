@@ -3,7 +3,7 @@
 
         <div class="flex items-center justify-between q-pa-md bg-white">
             <div>
-                <div class="stitle">Import Issue</div>
+                <div class="stitle">Import Receipt</div>
                 <q-breadcrumbs  class="text-dark">
                     <q-breadcrumbs-el class="cursor-pointer" @click="$inertia.get(route('dashboard'))" icon="dashboard" label="Dashboard"/>
                     <q-breadcrumbs-el  class="cursor-pointer" label="Go Back" @click="goBack"/>
@@ -90,7 +90,7 @@ const submitImport = () => {
         formData.append("document", filters.value.document);
 
 
-        axios.post(route('issues.import-issue'), formData, {
+        axios.post(route('receipts.import-receipt'), formData, {
             headers: { 'Content-Type': 'multipart/form-data' }
         })
             .then((res) => {
