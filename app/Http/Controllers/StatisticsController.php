@@ -62,7 +62,14 @@ class StatisticsController extends Controller
 
     private function getBarChartData($month = null, $year = null)
     {
+        // Get cells
         $cells = Cell::select('id', 'name')->get();
+
+        // Add a virtual cell for NULL
+        $cells->push((object)[
+            'id' => null,
+            'name' => 'N/A'
+        ]);
 
         // Issues
         $issuesQuery = Issue::query();
@@ -70,6 +77,7 @@ class StatisticsController extends Controller
             $issuesQuery->whereYear('letter_date', $year)
                 ->whereMonth('letter_date', $month);
         }
+
         $issuesByCell = $issuesQuery
             ->select('cell_id', DB::raw("COUNT(*) as count"))
             ->groupBy('cell_id')
@@ -81,19 +89,23 @@ class StatisticsController extends Controller
             $receiptsQuery->whereYear('letter_date', $year)
                 ->whereMonth('letter_date', $month);
         }
+
         $receiptsByCell = $receiptsQuery
             ->select('cell_id', DB::raw("COUNT(*) as count"))
             ->groupBy('cell_id')
             ->pluck('count', 'cell_id');
 
         return $cells->map(function ($cell) use ($issuesByCell, $receiptsByCell) {
+            $cid = $cell->id; // could be null
+
             return [
                 'name'     => $cell->name,
-                'issues'   => $issuesByCell[$cell->id] ?? 0,
-                'receipts' => $receiptsByCell[$cell->id] ?? 0,
+                'issues'   => $issuesByCell[$cid] ?? 0,
+                'receipts' => $receiptsByCell[$cid] ?? 0,
             ];
         });
     }
+
 
     /* ---------------------------------------------------------
      * ✅ 3. TIMELINE DATA (NO FILTER REQUESTED)
