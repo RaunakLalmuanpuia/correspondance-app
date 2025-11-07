@@ -2,7 +2,7 @@
     <q-page class="container" padding>
         <div class="flex items-center justify-between q-pa-md bg-white">
             <div>
-                <div class="stitle">Issue</div>
+                <div class="stitle">Issue - {{ selectedMonthLabel }}</div>
                 <q-breadcrumbs  class="text-dark">
                     <q-breadcrumbs-el class="cursor-pointer"  icon="dashboard" label="Dashboard" @click="$inertia.get(route('dashboard'))"/>
                     <q-breadcrumbs-el class="cursor-pointer" label="Issues" @click="$inertia.get(route('issues.index'))"/>
@@ -29,15 +29,16 @@
             @request="onRequest"
         >
             <template v-slot:top-left>
-                <q-input borderless dense debounce="800"
-                         @update:model-value="handleSearch"
-                         bg-color="grey-2"
-                         outlined
-                         v-model="filter" placeholder="Search">
-                    <template v-slot:append>
-                        <q-icon name="search" />
-                    </template>
-                </q-input>
+                <q-select
+                    v-model="selectedMonth"
+                    :options="monthOptions"
+                    label="Select Month"
+                    outlined
+                    dense
+                    style="width: 180px"
+                    emit-value
+                    map-options
+                />
             </template>
             <template v-slot:top-right>
                 <q-input borderless dense debounce="800"
@@ -146,7 +147,7 @@
     </q-page>
 </template>
 <script setup>
-import { ref, onMounted } from 'vue'
+import {ref, onMounted, computed, watch} from 'vue'
 import BackendLayout from "@/Layouts/BackendLayout.vue";
 import {date, useQuasar} from "quasar";
 import {router, useForm} from "@inertiajs/vue3";
@@ -218,6 +219,8 @@ function onRequest (props) {
             filter,
             page,
             rowsPerPage,
+            month: month.value,   // ✅ add month
+            year: year.value,     // ✅ add year
         }
     })
         .then(res=>{
@@ -247,12 +250,62 @@ const formatDate = (value, pattern) => {
         return 'Invalid Date'
     }
 }
+
+
+// DROPDOWN OPTIONS (unchanged)
+const monthNames = [
+    "January","February","March","April","May","June",
+    "July","August","September","October","November","December"
+];
+
+const monthOptions = ref([]);
+function generateMonthOptions() {
+    const today = new Date();
+    const options = [];
+    for (let i = 0; i < 12; i++) {
+        const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, "0");
+        options.push({ label: `${monthNames[d.getMonth()]} ${y}`, value: `${y}-${m}` });
+    }
+    monthOptions.value = options;
+}
+
+// ✅ selectedMonth is a STRING "YYYY-MM" because of emit-value + map-options
+const selectedMonth = ref(null);
+
+// Helpers
+const selectedMonthLabel = computed(() => {
+    if (!selectedMonth.value) return "";
+    const [y, m] = selectedMonth.value.split("-");
+    const date = new Date(Number(y), Number(m) - 1, 1);
+    return date.toLocaleString("en-US", { month: "long", year: "numeric" });
+});
+
+// ✅ Safe month/year computations
+const month = computed(() => {
+    const parts = (selectedMonth.value || "").split("-");
+    return Number(parts[1] || 0);
+});
+const year = computed(() => {
+    const parts = (selectedMonth.value || "").split("-");
+    return Number(parts[0] || 0);
+});
+
 onMounted(() => {
+    generateMonthOptions();
+    // set default to latest month
+    selectedMonth.value = monthOptions.value[0]?.value || null;
+
     // get initial data from server (1st page)
     // tableRef.value.requestServerInteraction()
     onRequest({pagination:pagination.value,
         filter:filter.value
     })
 })
+
+watch(selectedMonth, () => {
+    onRequest({ pagination: pagination.value, filter: filter.value });
+});
 
 </script>

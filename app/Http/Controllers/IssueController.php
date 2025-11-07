@@ -31,10 +31,26 @@ class IssueController extends Controller
 
         $perPage = $request->get('rowsPerPage') ?? 15;
         $filter = $request->get('filter');
+        $month  = $request->get('month');
+        $year   = $request->get('year');
+
         return response()->json([
             'list' => Issue::query()
                 ->with(['cell'])
-                ->when($filter,fn(Builder $builder)=>$builder->where('name','LIKE',"%$filter%"))
+                ->when($filter, function ($builder) use ($filter) {
+                    $builder->where(function ($q) use ($filter) {
+                        $q->where('subject', 'LIKE', "%$filter%")
+                            ->orWhere('letter_no', 'LIKE', "%$filter%");
+                    });
+                })
+
+                // ✅ MONTH/YEAR FILTER
+                ->when($month && $year, function ($builder) use ($month, $year) {
+                    $builder->whereMonth('letter_date', $month)
+                        ->whereYear('letter_date', $year);
+                })
+
+                ->orderBy('created_at', 'desc')
                 ->paginate($perPage),
         ],200);
     }
