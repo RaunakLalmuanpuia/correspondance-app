@@ -15,27 +15,27 @@
             </template>
 
             <template #nav-links v-if="$q.screen.gt.sm" >
-<!--                <q-btn @click="$inertia.get(route('dashboard'))" class="text-dark sized-btn"-->
-<!--                       :class="{-->
-<!--                        'active-menu text-accent': route().current()?.includes('dashboard'),-->
-<!--                        'text-dark': !route().current()?.includes('dashboard')-->
-<!--                      }"-->
-<!--                       color="btn-primary" outline label="Dashboard" no-caps/>-->
+                <q-btn @click="$inertia.get(route('dashboard'))" class="text-dark sized-btn"
+                       :class="{
+                        'active-item text-accent': route().current()?.includes('dashboard'),
+                        'text-dark': !route().current()?.includes('dashboard')
+                      }"
+                       outline label="Dashboard" no-caps/>
 
                 <q-btn @click="$inertia.get(route('issues.index'))"  class="text-dark sized-btn"
                        :class="{
-                        'active-menu text-accent': route().current()?.includes('issues'),
+                        'active-item text-accent': route().current()?.includes('issues'),
                         'text-dark': !route().current()?.includes('issues')
                       }"
 
-                       color="btn-primary" outline label="Issue" no-caps/>
+                       outline label="Issue" no-caps/>
 
                 <q-btn @click="$inertia.get(route('receipts.index'))" class="text-dark sized-btn"
                        :class="{
-                        'active-menu text-accent': route().current()?.includes('receipts'),
+                        'active-item text-accent': route().current()?.includes('receipts'),
                         'text-dark': !route().current()?.includes('receipts')
                       }"
-                       color="btn-primary" outline label="Receipt" no-caps/>
+                       outline label="Receipt" no-caps/>
             </template>
 
             <!-- 👇 Right Menu (user dropdown) -->
