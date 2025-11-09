@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\IssuesExport;
 use App\Models\Cell;
 use App\Models\Issue;
 use App\Models\User;
@@ -167,6 +168,24 @@ class IssueController extends Controller
         Excel::import(new IssueImport, $request->file('document'));
 
         return back()->with('success', 'Issues imported successfully.');
+    }
+
+    public function export(Request $request){
+        return inertia('Backend/Issue/Export',[
+
+        ]);
+    }
+
+    public function exportIssue(Request $request)
+    {
+
+        $export = new IssuesExport(
+            year: $request->year,
+            month: $request->month,
+            all: $request->boolean('all')
+        );
+        return Excel::download($export, 'issue.xlsx');
+
     }
 
 

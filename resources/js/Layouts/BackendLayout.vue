@@ -48,35 +48,50 @@
                         </q-item-section>
                     </q-item>
 
+
+
                     <q-expansion-item
-                        v-if="isAdmin"
                         expand-separator
-                        label="Settings"
+                        label="Export"
                     >
                         <q-separator/>
-                        <q-item v-close-popup clickable @click="$inertia.get(route('profile.edit'))">
+<!--                        <q-item v-close-popup clickable @click="$inertia.get(route('profile.edit'))">-->
+<!--                            <q-item-section>-->
+<!--                                <q-item-label>Cells</q-item-label>-->
+<!--                            </q-item-section>-->
+<!--                        </q-item>-->
+
+
+                        <q-item v-close-popup clickable @click="$inertia.get(route('issues.export'))">
                             <q-item-section>
-                                <q-item-label>Cells</q-item-label>
+                                <q-item-label>Export Issue</q-item-label>
                             </q-item-section>
                         </q-item>
 
-                        <q-item v-close-popup clickable @click="$inertia.get(route('user.index'))">
+                        <q-item v-close-popup clickable @click="$inertia.get(route('receipts.export'))">
                             <q-item-section>
-                                <q-item-label>Users</q-item-label>
+                                <q-item-label>Export Receipt</q-item-label>
                             </q-item-section>
                         </q-item>
 
-                        <q-item v-close-popup clickable @click="$inertia.get(route('issues.import'))">
-                            <q-item-section>
-                                <q-item-label>Import Issue</q-item-label>
-                            </q-item-section>
-                        </q-item>
-                        <q-item v-close-popup clickable @click="$inertia.get(route('receipts.import'))">
-                            <q-item-section>
-                                <q-item-label>Import Receipt</q-item-label>
-                            </q-item-section>
-                        </q-item>
+<!--                        <q-item v-close-popup clickable @click="$inertia.get(route('issues.import'))">-->
+<!--                            <q-item-section>-->
+<!--                                <q-item-label>Import Issue</q-item-label>-->
+<!--                            </q-item-section>-->
+<!--                        </q-item>-->
+<!--                        <q-item v-close-popup clickable @click="$inertia.get(route('receipts.import'))">-->
+<!--                            <q-item-section>-->
+<!--                                <q-item-label>Import Receipt</q-item-label>-->
+<!--                            </q-item-section>-->
+<!--                        </q-item>-->
                     </q-expansion-item>
+
+<!--                    <q-separator v-if="isAdmin"/>-->
+                    <q-item  v-if="isAdmin" v-close-popup clickable @click="$inertia.get(route('user.index'))">
+                        <q-item-section>
+                            <q-item-label>Users</q-item-label>
+                        </q-item-section>
+                    </q-item>
 
                     <q-item v-close-popup clickable @click="$inertia.get(route('profile.edit'))">
                         <q-item-section>

@@ -51,6 +51,9 @@ Route::group(['middleware'=>'auth','prefix' => 'issues'], function () {
     Route::get('/import', [IssueController::class, 'import'])->name('issues.import');
     Route::post('/import-issue', [IssueController::class, 'importIssue'])->name('issues.import-issue');
 
+    Route::get('export', [IssueController::class, 'export'])->name('issues.export');
+    Route::get('/export-issue', [IssueController::class, 'exportIssue'])->name('issues.export-issue');
+
 });
 
 
@@ -67,6 +70,9 @@ Route::group(['middleware'=>'auth','prefix' => 'receipts'], function () {
 
     Route::get('/import', [ReceiptController::class, 'import'])->name('receipts.import');
     Route::post('/import-receipt', [ReceiptController::class, 'importReceipt'])->name('receipts.import-receipt');
+
+    Route::get('export', [ReceiptController::class, 'export'])->name('receipts.export');
+    Route::get('/export-receipt', [ReceiptController::class, 'exportReceipt'])->name('receipts.export-receipt');
 });
 
 Route::group(['middleware'=>'auth','prefix' => 'user'], function () {

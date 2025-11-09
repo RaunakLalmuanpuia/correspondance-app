@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ReceiptExport;
 use App\Imports\ReceiptImport;
 use App\Models\Cell;
 use App\Models\Receipt;
@@ -170,4 +171,21 @@ class ReceiptController extends Controller
         return back()->with('success', 'Receipt imported successfully.');
     }
 
+    public function export(Request $request){
+        return inertia('Backend/Receipt/Export',[
+
+        ]);
+    }
+
+    public function exportReceipt(Request $request)
+    {
+
+        $export = new ReceiptExport(
+            year: $request->year,
+            month: $request->month,
+            all: $request->boolean('all')
+        );
+        return Excel::download($export, 'receipt.xlsx');
+
+    }
 }

@@ -126,8 +126,8 @@ const columns = [
     { name: 'letter_date', align:'left',label: 'Letter Date', field: 'letter_date', sortable: true },
     { name: 'received_from',align:'left', label: 'Received From', field: 'received_from', sortable: true },
     { name: 'designated_cell', align:'left',label: 'Designated Cell', field: 'designated_cell', sortable: true },
-    { name: 'name_of_da', align:'left',label: 'Name of Da', field: 'name_of_da', sortable: true },
-    { name: 'created_at', align:'left',label: 'Issue Date', field: 'created_at', sortable: true },
+    { name: 'name_of_da', align:'left',label: 'Name of DA', field: 'name_of_da', sortable: true },
+    { name: 'created_at', align:'left',label: 'Received Date', field: 'created_at', sortable: true },
     { name: 'action',align:'left', label: 'Action', field: 'action', sortable: true },
 ]
 
