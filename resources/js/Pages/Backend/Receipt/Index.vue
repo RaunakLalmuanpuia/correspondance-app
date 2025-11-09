@@ -168,8 +168,15 @@ const handleDelete=item=>{
 // }
 
 const handleSearch=val=>{
+    filter.value = val;
+
     if (val && selectedMonth.value !== "all") {
         selectedMonth.value = "all";   // ✅ auto-switch to All when searching
+    }
+
+    if (!val) {
+        // Search cleared → return to current month
+        selectedMonth.value = currentMonth.value;
     }
     onRequest({pagination:pagination.value,filter:val})
 }
@@ -300,9 +307,14 @@ const year = computed(() => {
 //     const parts = (selectedMonth.value || "").split("-");
 //     return Number(parts[0] || 0);
 // });
+const currentMonth = ref(null);
 
 onMounted(() => {
     generateMonthOptions();
+
+    // [0] = All, [1] = Latest Month
+    currentMonth.value = monthOptions.value[1]?.value || null;
+
     // set default to latest month
     selectedMonth.value = monthOptions.value[1]?.value || null;
 
