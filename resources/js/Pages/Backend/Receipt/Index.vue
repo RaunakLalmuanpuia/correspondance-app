@@ -44,7 +44,7 @@
                          @update:model-value="handleSearch"
                          bg-color="grey-2"
                          outlined
-                         v-model="filter" placeholder="Search">
+                         v-model="filter" clearable placeholder="Search">
                     <template v-slot:append>
                         <q-icon name="search" />
                     </template>
