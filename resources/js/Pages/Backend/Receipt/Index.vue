@@ -139,7 +139,7 @@ const pagination = ref({
     sortBy: 'desc',
     descending: false,
     page: 1,
-    rowsPerPage: 15,
+    rowsPerPage: 50,
     rowsNumber: 0
 })
 
@@ -168,6 +168,9 @@ const handleDelete=item=>{
 // }
 
 const handleSearch=val=>{
+    if (val && selectedMonth.value !== "all") {
+        selectedMonth.value = "all";   // ✅ auto-switch to All when searching
+    }
     onRequest({pagination:pagination.value,filter:val})
 }
 function onRequest (props) {
@@ -221,43 +224,87 @@ const monthNames = [
 ];
 
 const monthOptions = ref([]);
+
 function generateMonthOptions() {
     const today = new Date();
     const options = [];
+
+    // ✅ Add ALL option
+    options.push({
+        label: "All",
+        value: "all"
+    });
+
     for (let i = 0; i < 12; i++) {
         const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
         const y = d.getFullYear();
         const m = String(d.getMonth() + 1).padStart(2, "0");
-        options.push({ label: `${monthNames[d.getMonth()]} ${y}`, value: `${y}-${m}` });
+
+        options.push({
+            label: `${monthNames[d.getMonth()]} ${y}`,
+            value: `${y}-${m}`
+        });
     }
+
     monthOptions.value = options;
 }
+// function generateMonthOptions() {
+//     const today = new Date();
+//     const options = [];
+//     for (let i = 0; i < 12; i++) {
+//         const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+//         const y = d.getFullYear();
+//         const m = String(d.getMonth() + 1).padStart(2, "0");
+//         options.push({ label: `${monthNames[d.getMonth()]} ${y}`, value: `${y}-${m}` });
+//     }
+//     monthOptions.value = options;
+// }
 
 // ✅ selectedMonth is a STRING "YYYY-MM" because of emit-value + map-options
 const selectedMonth = ref(null);
 
 // Helpers
+
 const selectedMonthLabel = computed(() => {
+    if (selectedMonth.value === "all") return "All";
     if (!selectedMonth.value) return "";
     const [y, m] = selectedMonth.value.split("-");
     const date = new Date(Number(y), Number(m) - 1, 1);
     return date.toLocaleString("en-US", { month: "long", year: "numeric" });
 });
 
+// const selectedMonthLabel = computed(() => {
+//     if (!selectedMonth.value) return "";
+//     const [y, m] = selectedMonth.value.split("-");
+//     const date = new Date(Number(y), Number(m) - 1, 1);
+//     return date.toLocaleString("en-US", { month: "long", year: "numeric" });
+// });
+
 // ✅ Safe month/year computations
 const month = computed(() => {
-    const parts = (selectedMonth.value || "").split("-");
-    return Number(parts[1] || 0);
+    if (selectedMonth.value === "all") return null;
+    const parts = selectedMonth.value?.split("-") || [];
+    return Number(parts[1] || null);
 });
+
 const year = computed(() => {
-    const parts = (selectedMonth.value || "").split("-");
-    return Number(parts[0] || 0);
+    if (selectedMonth.value === "all") return null;
+    const parts = selectedMonth.value?.split("-") || [];
+    return Number(parts[0] || null);
 });
+// const month = computed(() => {
+//     const parts = (selectedMonth.value || "").split("-");
+//     return Number(parts[1] || 0);
+// });
+// const year = computed(() => {
+//     const parts = (selectedMonth.value || "").split("-");
+//     return Number(parts[0] || 0);
+// });
 
 onMounted(() => {
     generateMonthOptions();
     // set default to latest month
-    selectedMonth.value = monthOptions.value[0]?.value || null;
+    selectedMonth.value = monthOptions.value[1]?.value || null;
 
 
     onRequest({pagination:pagination.value,

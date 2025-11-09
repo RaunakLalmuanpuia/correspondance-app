@@ -40,16 +40,20 @@ class IssueController extends Controller
                 ->when($filter, function ($builder) use ($filter) {
                     $builder->where(function ($q) use ($filter) {
                         $q->where('subject', 'LIKE', "%$filter%")
-                            ->orWhere('letter_no', 'LIKE', "%$filter%");
+                            ->orWhere('letter_no', 'LIKE', "%$filter%")
+                            ->orWhereDate('letter_date', $filter);
                     });
                 })
-
-                // ✅ MONTH/YEAR FILTER
-                ->when($month && $year, function ($builder) use ($month, $year) {
-                    $builder->whereMonth('letter_date', $month)
+//                // ✅ MONTH/YEAR FILTER
+//                ->when($month && $year, function ($builder) use ($month, $year) {
+//                    $builder->whereMonth('letter_date', $month)
+//                        ->whereYear('letter_date', $year);
+//                })
+                // ✅ Only apply month/year filter when NOT searching
+                ->when(!$filter && $month && $year, function ($builder) use ($month, $year) {
+                    return $builder->whereMonth('letter_date', $month)
                         ->whereYear('letter_date', $year);
                 })
-
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage),
         ],200);
