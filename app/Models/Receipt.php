@@ -22,9 +22,7 @@ class Receipt extends Model
         'received_date'
     ];
 
-    protected $casts = [
-        'letter_date' => 'date',
-    ];
+
 
     public function cell(): BelongsTo
     {

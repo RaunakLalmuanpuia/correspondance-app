@@ -85,7 +85,7 @@ class ReceiptController extends Controller
                         ->whereYear('letter_date', $year);
                 })
 
-                ->orderBy('created_at', 'desc')
+                ->orderBy('s_no', 'desc')
                 ->paginate($perPage),
         ], 200);
     }

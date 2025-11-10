@@ -102,7 +102,7 @@
 
         </q-form>
 
-{{form.letter_date}}
+
     </q-page>
 </template>
 <script setup>

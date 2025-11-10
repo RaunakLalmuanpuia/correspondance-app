@@ -33,12 +33,25 @@ class ReceiptImport implements OnEachRow, WithHeadingRow
             }
         }
 
+        // ✅ Letter Date (Excel serial number → real date)
+        $letterDate = null;
+        if (!empty($r['letter_date'])) {
+            try {
+                // Excel date serialization
+                $letterDate = $this->parseDate($r['letter_date'] ?? null);
 
-        // ✅ Parse Letter Date
-        $letterDate = $this->parseDate($r['letter_date'] ?? null);
+            } catch (\Exception $e) {}
+        }
 
-        // ✅ Parse Received Date → created_at
-        $receivedAt = $this->parseDateTime($r['created_time'] ?? null) ?? now();
+        // ✅ Issue Date → created_at
+        $receivedAt = now();
+        if (!empty($r['created_time'])) {
+            try {
+                $receivedAt = $this->parseDateTime($r['created_time'] ?? null) ?? now();
+            } catch (\Exception $e) {}
+        }
+
+
 
 
 
@@ -51,7 +64,7 @@ class ReceiptImport implements OnEachRow, WithHeadingRow
             'letter_date'   => $letterDate,
             'received_from' => $r['received_from'] ?? null,
             'name_of_da'    => $r['name_of_da'] ?? null,
-            'received_date' => $r['received_date'] ?? null,
+            'received_date' => $receivedAt,
             'created_at'    => $receivedAt,
             'updated_at'    => now(),
         ]);
