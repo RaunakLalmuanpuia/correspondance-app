@@ -11,12 +11,14 @@ class Issue extends Model
     //
     use HasFactory;
     protected $fillable = [
+        's_no',
         'cell_id',
         'letter_addressee_main',
         'letter_addressee_copy_to',
         'subject',
         'letter_no',
         'letter_date',
+        'issue_date',
     ];
 
     protected $casts = [

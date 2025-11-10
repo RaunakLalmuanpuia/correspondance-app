@@ -38,18 +38,20 @@ class ReceiptImport implements OnEachRow, WithHeadingRow
         $letterDate = $this->parseDate($r['letter_date'] ?? null);
 
         // ✅ Parse Received Date → created_at
-        $receivedAt = $this->parseDateTime($r['received_date'] ?? null) ?? now();
+        $receivedAt = $this->parseDateTime($r['created_time'] ?? null) ?? now();
 
 
 
         // ✅ Create receipt
         Receipt::create([
+            's_no'          => $r['sl'],
             'cell_id'       => $cellId,
             'subject'       => $r['subject'] ?? null,
             'letter_no'     => $r['letter_no'] ?? null,
             'letter_date'   => $letterDate,
             'received_from' => $r['received_from'] ?? null,
             'name_of_da'    => $r['name_of_da'] ?? null,
+            'received_date' => $r['received_date'] ?? null,
             'created_at'    => $receivedAt,
             'updated_at'    => now(),
         ]);
@@ -99,29 +101,39 @@ class ReceiptImport implements OnEachRow, WithHeadingRow
     }
     private function parseDateTime($value)
     {
-        if (empty(trim($value))) {
+        if (empty($value)) {
             return null;
         }
 
-        $value = trim($value);
-
-        // ✅ CASE 1: Excel serial number (int or float)
-        if (is_numeric($value)) {
-            return Carbon::create(1899, 12, 30)
-                ->addDays((float)$value);
+        // ✅ Case 0: If Excel gave a DateTime object, return Carbon instance
+        if ($value instanceof \DateTimeInterface) {
+            return Carbon::instance($value);
         }
 
-        // ✅ CASE 2: Date + Time (AM/PM or 24-hr format)
+        // ✅ Case 1: Remove stray characters
+        $value = trim($value, " \t\n\r\0\x0B\"");
+
+        // ✅ Case 2: Numeric Excel serial
+        if (is_numeric($value)) {
+            return Carbon::create(1899, 12, 30)->addDays((float)$value);
+        }
+
+        // ✅ Case 3: Normalize
+        $value = preg_replace('/\s+/', ' ', str_replace(['-', '.'], '/', $value));
+
+        // ✅ Case 4: Supported formats
         $formats = [
-            'd/m/Y g:i A',
-            'd/m/Y g:iA',
-            'd/m/Y h:i A',
-            'd/m/Y h:iA',
+            'F d, Y h:i A',
+            'F d, Y H:i',
+            'm/d/Y H:i',
+            'm/d/Y g:i A',
             'd/m/Y H:i',
-            'd-m-Y g:i A',
-            'd-m-Y H:i',
-            'd/m/Y',
+            'd/m/Y g:i A',
+            'Y-m-d H:i:s',
+            'Y-m-d H:i',
             'Y-m-d',
+            'm/d/Y',
+            'd/m/Y'
         ];
 
         foreach ($formats as $format) {
@@ -130,11 +142,13 @@ class ReceiptImport implements OnEachRow, WithHeadingRow
             } catch (\Exception $e) {}
         }
 
-        // ✅ Last fallback
+        // ✅ Final fallback
         try {
             return Carbon::parse($value);
         } catch (\Exception $e) {
             return null;
         }
     }
+
+
 }

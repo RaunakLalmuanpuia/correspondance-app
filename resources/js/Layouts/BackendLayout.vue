@@ -74,16 +74,16 @@
                             </q-item-section>
                         </q-item>
 
-<!--                        <q-item v-close-popup clickable @click="$inertia.get(route('issues.import'))">-->
-<!--                            <q-item-section>-->
-<!--                                <q-item-label>Import Issue</q-item-label>-->
-<!--                            </q-item-section>-->
-<!--                        </q-item>-->
-<!--                        <q-item v-close-popup clickable @click="$inertia.get(route('receipts.import'))">-->
-<!--                            <q-item-section>-->
-<!--                                <q-item-label>Import Receipt</q-item-label>-->
-<!--                            </q-item-section>-->
-<!--                        </q-item>-->
+                        <q-item v-close-popup clickable @click="$inertia.get(route('issues.import'))">
+                            <q-item-section>
+                                <q-item-label>Import Issue</q-item-label>
+                            </q-item-section>
+                        </q-item>
+                        <q-item v-close-popup clickable @click="$inertia.get(route('receipts.import'))">
+                            <q-item-section>
+                                <q-item-label>Import Receipt</q-item-label>
+                            </q-item-section>
+                        </q-item>
                     </q-expansion-item>
 
 <!--                    <q-separator v-if="isAdmin"/>-->

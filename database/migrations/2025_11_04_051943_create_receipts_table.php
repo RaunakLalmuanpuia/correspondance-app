@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('receipts', function (Blueprint $table) {
             $table->id();
+            $table->string('s_no')->nullable();
             $table->foreignIdFor(\App\Models\Cell::class)->nullable()->constrained();
             $table->longText('subject')->nullable();
             $table->string('letter_no')->nullable();
             $table->date('letter_date')->nullable();
             $table->string('received_from')->nullable();
             $table->string('name_of_da')->nullable();
+            $table->dateTime('received_date')->nullable();
             $table->timestamps();
         });
     }

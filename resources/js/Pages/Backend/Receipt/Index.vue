@@ -52,7 +52,7 @@
             </template>
             <template v-slot:body-cell-s_no="props">
                 <q-td>
-                    {{ (pagination.page - 1) * pagination.rowsPerPage + (props.pageIndex + 1) }}
+                    {{  props.row.s_no }}
                 </q-td>
             </template>
             <template v-slot:body-cell-subject="props">
@@ -83,9 +83,9 @@
                 </q-td>
             </template>
 
-            <template v-slot:body-cell-created_at="props">
+            <template v-slot:body-cell-received_date="props">
                 <q-td>
-                    {{formatDate(props.row.created_at)}}
+                    {{formatDate(props.row.received_date)}}
                 </q-td>
             </template>
             <template v-slot:body-cell-action="props">
@@ -127,7 +127,7 @@ const columns = [
     { name: 'received_from',align:'left', label: 'Received From', field: 'received_from', sortable: true },
     { name: 'designated_cell', align:'left',label: 'Designated Cell', field: 'designated_cell', sortable: true },
     { name: 'name_of_da', align:'left',label: 'Name of DA', field: 'name_of_da', sortable: true },
-    { name: 'created_at', align:'left',label: 'Received Date', field: 'created_at', sortable: true },
+    { name: 'received_date', align:'left',label: 'Received Date', field: 'received_date', sortable: true },
     { name: 'action',align:'left', label: 'Action', field: 'action', sortable: true },
 ]
 
@@ -139,7 +139,7 @@ const pagination = ref({
     sortBy: 'desc',
     descending: false,
     page: 1,
-    rowsPerPage: 50,
+    rowsPerPage: 10,
     rowsNumber: 0
 })
 

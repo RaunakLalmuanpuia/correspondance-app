@@ -13,12 +13,14 @@ return new class extends Migration
     {
         Schema::create('issues', function (Blueprint $table) {
             $table->id();
+            $table->string('s_no')->nullable();
             $table->foreignIdFor(\App\Models\Cell::class)->nullable()->constrained();
             $table->longText('subject')->nullable();
             $table->longText('letter_addressee_main')->nullable();
             $table->longText('letter_addressee_copy_to')->nullable();
             $table->string('letter_no')->nullable();
             $table->date('letter_date')->nullable();
+            $table->dateTime('issue_date')->nullable();
             $table->timestamps();
         });
     }

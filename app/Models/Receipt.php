@@ -12,12 +12,14 @@ class Receipt extends Model
     use HasFactory;
 
     protected $fillable = [
+        's_no',
         'cell_id',
         'subject',
         'letter_no',
         'letter_date',
         'received_from',
         'name_of_da',
+        'received_date'
     ];
 
     protected $casts = [
