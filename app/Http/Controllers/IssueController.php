@@ -75,31 +75,38 @@ class IssueController extends Controller
 
     public function store(Request $request)
     {
-
         $user = $request->user();
-        abort_if(!$user->hasPermissionTo('create-issue'),403,'Access Denied');
+        abort_if(!$user->hasPermissionTo('create-issue'), 403, 'Access Denied');
 
-        $validated=$this->validate($request, [
-            'cell_id'=>['nullable',Rule::exists('cells','id')],
+        $validated = $this->validate($request, [
+            'cell_id'=>['nullable', Rule::exists('cells','id')],
             'subject' => 'required|string|max:255',
             'letter_addressee_main' => 'nullable|string',
             'letter_addressee_copy_to' => 'nullable|string',
             'letter_no' => 'required|string|unique:issues,letter_no|max:255',
             'letter_date' => 'nullable|date',
-
         ]);
 
+        $issue = DB::transaction(function () use ($request) {
 
+            // Lock table to ensure concurrency-safe increment
+            $nextSno = DB::table('issues')
+                ->lockForUpdate()                // Important for concurrency
+                ->max('s_no');
 
-        // ✅ Create issue record
-        $issue = Issue::create([
-            'cell_id' => $request->cell_id,
-            'subject' => $request->subject,
-            'letter_addressee_main' => $request->letter_addressee_main,
-            'letter_addressee_copy_to' => $request->letter_addressee_copy_to,
-            'letter_no' => $request->letter_no,
-            'letter_date' => $request->letter_date,
-        ]);
+            $nextSno = $nextSno ? $nextSno + 1 : 1;
+
+            return Issue::create([
+                's_no' => $nextSno,
+                'cell_id' => $request->cell_id,
+                'subject' => $request->subject,
+                'letter_addressee_main' => $request->letter_addressee_main,
+                'letter_addressee_copy_to' => $request->letter_addressee_copy_to,
+                'letter_no' => $request->letter_no,
+                'letter_date' => $request->letter_date,
+                'issue_date' => now(),
+            ]);
+        });
 
         return to_route('issues.index');
     }

@@ -72,33 +72,39 @@ class ReceiptController extends Controller
 
     public function store(Request $request)
     {
-
         $user = $request->user();
-        abort_if(!$user->hasPermissionTo('create-receipt'),403,'Access Denied');
+        abort_if(!$user->hasPermissionTo('create-receipt'), 403, 'Access Denied');
 
-
-        $validated=$this->validate($request, [
-
+        $validated = $this->validate($request, [
             'subject' => 'required|string|max:255',
-            'letter_no' => 'required|string|unique:issues,letter_no|max:255',
+            'letter_no' => 'required|string|max:255',
             'letter_date' => 'nullable|date',
             'received_from' => 'nullable|string',
-            'cell_id'=>['nullable',Rule::exists('cells','id')],
+            'cell_id'=>['nullable', Rule::exists('cells','id')],
             'name_of_da'=>'nullable|string',
-
         ]);
 
+        $receipt = DB::transaction(function () use ($request) {
 
+            // Lock table rows for sequence generation
+            $nextSno = DB::table('receipts')
+                ->lockForUpdate()
+                ->max('s_no');
 
-        // ✅ Create issue record
-        $receipt = Receipt::create([
-            'subject' => $request->subject,
-            'letter_no' => $request->letter_no,
-            'letter_date' => $request->letter_date ? $request->letter_date  : now(),
-            'received_from' => $request->received_from,
-            'cell_id' => $request->cell_id,
-            'name_of_da' => $request->name_of_da,
-        ]);
+            $nextSno = $nextSno ? $nextSno + 1 : 1;
+
+            // Create the receipt
+            return Receipt::create([
+                's_no' => $nextSno,
+                'subject' => $request->subject,
+                'letter_no' => $request->letter_no,
+                'letter_date' => $request->letter_date ?: now(),
+                'received_from' => $request->received_from,
+                'cell_id' => $request->cell_id,
+                'name_of_da' => $request->name_of_da,
+                'received_date' => now(),
+            ]);
+        });
 
         return to_route('receipts.index');
     }
