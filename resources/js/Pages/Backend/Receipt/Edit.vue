@@ -40,9 +40,6 @@
                 <q-input v-model="form.letter_date"
                          :error="!!form.errors?.letter_date"
                          :error-message="form.errors?.letter_date?.toString()"
-                         :rules="[
-                             val=>!!val || 'Letter Date is required'
-                         ]"
                          type="date"
                          bg-color="white"
                          label="Letter Date"
@@ -99,13 +96,13 @@
                 <div class="flex q-gutter-sm">
                     <q-btn :loading="state.submitting" class="sized-btn" color="primary" label="Save" type="submit"/>
                     <q-btn class="sized-btn" color="negative" label="Cancel" outline
-                           @click="$inertia.get(route('issues.index'))"/>
+                           @click="$inertia.get(route('receipts.index'))"/>
                 </div>
             </div>
 
         </q-form>
 
-
+{{form.letter_date}}
     </q-page>
 </template>
 <script setup>

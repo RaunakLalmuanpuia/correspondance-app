@@ -27,36 +27,69 @@ class ReceiptController extends Controller
 
     public function jsonAll(Request $request)
     {
-
         $user = $request->user();
-        abort_if(!$user->hasPermissionTo('view-receipt'),403,'Access Denied');
-
-
+        abort_if(!$user->hasPermissionTo('view-receipt'), 403, 'Access Denied');
 
         $perPage = $request->get('rowsPerPage') ?? 15;
-        $filter = $request->get('filter');
+        $filter  = $request->get('filter');
+        $month   = $request->get('month');
+        $year    = $request->get('year');
 
-        $month  = $request->get('month');
-        $year   = $request->get('year');
+        // ==========================================
+        // ✅ UNIVERSAL DATE NORMALIZATION
+        // Accepts: 01/11/2025, 01.11.2025, 01-11-2025, 1/11/25, etc.
+        // ==========================================
+        $parsedDate = null;
+
+        if ($filter) {
+            // Normalize separators to hyphens
+            $normalized = str_replace(['.', '/'], '-', $filter);
+
+            // Try parsing using Carbon
+            try {
+                $parsedDate = \Carbon\Carbon::parse($normalized)->format('Y-m-d');
+            } catch (\Exception $e) {
+                $parsedDate = null;
+            }
+        }
 
         return response()->json([
             'list' => Receipt::query()
                 ->with(['cell'])
-                ->when($filter, function ($builder) use ($filter) {
-                    $builder->where(function ($q) use ($filter) {
+
+                // ==========================================
+                // ✅ SEARCH LOGIC
+                // ==========================================
+                ->when($filter, function ($builder) use ($filter, $parsedDate) {
+                    $builder->where(function ($q) use ($filter, $parsedDate) {
+
+                        // Text-based search
                         $q->where('subject', 'LIKE', "%$filter%")
-                            ->orWhere('letter_no', 'LIKE', "%$filter%");
+                            ->orWhere('s_no', 'LIKE', "%$filter%")
+                            ->orWhere('letter_no', 'LIKE', "%$filter%")
+                            ->orWhere('received_from', 'LIKE', "%$filter%");
+
+                        // ✅ Date search (received_date)
+                        if ($parsedDate) {
+                            $q->orWhereDate('received_date', $parsedDate)
+                                ->orWhereDate('letter_date', $parsedDate); // add if needed
+                        }
                     });
                 })
-                // ✅ MONTH/YEAR FILTER
-                ->when($month && $year, function ($builder) use ($month, $year) {
-                    $builder->whereMonth('letter_date', $month)
+
+                // ==========================================
+                // ✅ MONTH/YEAR FILTER (only when NOT searching)
+                // ==========================================
+                ->when(!$filter && $month && $year, function ($builder) use ($month, $year) {
+                    return $builder->whereMonth('letter_date', $month)
                         ->whereYear('letter_date', $year);
                 })
+
                 ->orderBy('created_at', 'desc')
                 ->paginate($perPage),
-        ],200);
+        ], 200);
     }
+
 
     public function create(Request $request)
     {
@@ -112,6 +145,7 @@ class ReceiptController extends Controller
     public function edit(Request $request, Receipt $model)
     {
 
+//        dd($model->load('cell'));
         $user = $request->user();
         abort_if(!$user->hasPermissionTo('edit-receipt'),403,'Access Denied');
 
