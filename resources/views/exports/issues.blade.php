@@ -15,14 +15,14 @@
     <tbody>
     @foreach($issues as $issue)
         <tr>
-            <td>{{ $issue->id }}</td>
+            <td>{{ $issue->s_no }}</td>
             <td>{{ $issue->subject }}</td>
             <td>{{ $issue->letter_no ?? '—' }}</td>
             <td>{{ $issue->letter_addressee_main }}</td>
             <td>{{ $issue->letter_addressee_copy_to }}</td>
             <td>{{ $issue->letter_date ? \Carbon\Carbon::parse($issue->letter_date)->format('d/m/Y') : '—' }}</td>
             <td>{{ $issue->cell?->name }}</td>
-            <td>{{ $issue->created_at ? \Carbon\Carbon::parse($issue->created_at)->format('d/m/Y') : '—' }}</td>
+            <td>{{ $issue->issue_date ? \Carbon\Carbon::parse($issue->issue_date)->format('d/m/Y') : '—' }}</td>
 
 
         </tr>

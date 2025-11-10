@@ -17,11 +17,11 @@ class IssuesExport implements FromView
 
     public function view(): View
     {
-        $query = Issue::with('cell')->orderBy('id', 'desc');
+        $query = Issue::with('cell')->orderBy('s_no', 'desc');
 
         if (!$this->all && $this->year && $this->month) {
-            $query->whereYear('letter_date', $this->year)
-                ->whereMonth('letter_date', $this->month);
+            $query->whereYear('issue_date', $this->year)
+                ->whereMonth('issue_date', $this->month);
         }
 
         $issues = $query->get();

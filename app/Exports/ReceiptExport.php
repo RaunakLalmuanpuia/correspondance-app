@@ -18,11 +18,11 @@ class ReceiptExport implements FromView
 
     public function view(): View
     {
-        $query = Receipt::with('cell')->orderBy('id', 'desc');
+        $query = Receipt::with('cell')->orderBy('s_no', 'desc');
 
         if (!$this->all && $this->year && $this->month) {
-            $query->whereYear('letter_date', $this->year)
-                ->whereMonth('letter_date', $this->month);
+            $query->whereYear('received_date', $this->year)
+                ->whereMonth('received_date', $this->month);
         }
 
         $receipts = $query->get();
