@@ -77,7 +77,7 @@ class IssueController extends Controller
                     return $builder->whereMonth('issue_date', $month)
                         ->whereYear('issue_date', $year);
                 })
-                ->orderBy('s_no', 'desc')
+                ->orderByRaw('CAST(s_no AS UNSIGNED) DESC')
                 ->paginate($perPage),
         ], 200);
     }
