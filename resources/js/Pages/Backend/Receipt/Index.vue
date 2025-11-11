@@ -92,7 +92,7 @@
                 <q-td>
                     <q-btn round icon="more_vert">
                         <q-menu>
-                            <q-item clickable @click="$inertia.get(route('receipts.show',props.row.id))">
+                            <q-item clickable @click="openViewDialog(props.row)">
                                 <q-item-section>View Detail</q-item-section>
                             </q-item>
                             <q-item clickable @click="$inertia.get(route('receipts.edit',props.row.id))">
@@ -109,6 +109,87 @@
             </template>
 
         </q-table>
+
+        <q-dialog v-model="showDialog"  transition-show="slide-up" transition-hide="slide-down">
+            <q-card>
+                <q-card-section class="row items-center justify-between">
+                    <div class="stitle">Receipt - {{selectedReceipt.s_no}}</div>
+                    <q-btn dense flat icon="close" @click="showDialog = false" />
+                </q-card-section>
+
+                <q-card-section>
+
+                    <div class="row q-col-gutter-sm" style="max-width: 720px">
+
+                        <!-- Subject -->
+                        <div class="col-xs-12">
+                            <q-field label="Subject" outlined stack-label bg-color="white">
+                                <div class="subtitle whitespace-pre-line">
+                                    {{ selectedReceipt.subject || '—' }}
+                                </div>
+                            </q-field>
+                        </div>
+
+                        <!-- Received From -->
+                        <div class="col-xs-12">
+                            <q-field label="Received From" outlined stack-label bg-color="white">
+                                <div class="subtitle whitespace-pre-line">
+                                    {{ selectedReceipt.received_from || '—' }}
+                                </div>
+                            </q-field>
+                        </div>
+
+                        <!-- Letter No -->
+                        <div class="col-xs-12 col-sm-6">
+                            <q-field label="Letter No" outlined stack-label bg-color="white">
+                                <div class="subtitle">
+                                    {{ selectedReceipt.letter_no || '—' }}
+                                </div>
+                            </q-field>
+                        </div>
+
+                        <!-- Letter Date -->
+                        <div class="col-xs-12 col-sm-6">
+                            <q-field label="Letter Date" outlined stack-label bg-color="white">
+                                <div class="subtitle">
+                                    {{ formatDate(selectedReceipt.letter_date) }}
+                                </div>
+                            </q-field>
+                        </div>
+
+                        <!-- Designated Cell -->
+                        <div class="col-xs-12 col-sm-6">
+                            <q-field label="Designated Cell" outlined stack-label bg-color="white">
+                                <div class="subtitle">
+                                    {{ selectedReceipt?.cell?.name || '—' }}
+                                </div>
+                            </q-field>
+                        </div>
+
+                        <!-- Name of DA  -->
+                        <div class="col-xs-12 col-sm-6">
+                            <q-field label="Name of DA" outlined stack-label bg-color="white">
+                                <div class="subtitle">
+                                    {{ formatDate(selectedReceipt.name_of_da) || '—' }}
+                                </div>
+                            </q-field>
+                        </div>
+
+                        <!-- Received Date -->
+                        <div class="col-xs-12 col-sm-6">
+                            <q-field label="Issue Date" outlined stack-label bg-color="white">
+                                <div class="subtitle">
+                                    {{ formatDate(selectedReceipt.received_date) || '—' }}
+                                </div>
+                            </q-field>
+                        </div>
+
+                    </div>
+
+                </q-card-section>
+            </q-card>
+        </q-dialog>
+
     </q-page>
 </template>
 <script setup>
@@ -143,6 +224,14 @@ const pagination = ref({
     rowsNumber: 0
 })
 
+const showDialog = ref(false)
+const selectedReceipt = ref({})
+
+
+const openViewDialog = (row) => {
+    selectedReceipt.value = row
+    showDialog.value = true
+}
 const handleDelete=item=>{
     q.dialog({
         title:'Confirmation',

@@ -132,6 +132,16 @@ class IssueController extends Controller
         return to_route('issues.index');
     }
 
+
+    public function show(Request $request, Issue $model)
+    {
+        $user = $request->user();
+        abort_if(!$user->hasPermissionTo('view-issue'), 403, 'Access Denied');
+
+        return inertia('Backend/Issue/Show', [
+            'data'=>$model->load('cell'),
+        ]);
+    }
     public function edit(Request $request, Issue $model)
     {
 
