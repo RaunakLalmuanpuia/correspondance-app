@@ -81,8 +81,8 @@ class ReceiptController extends Controller
                 // ✅ MONTH/YEAR FILTER (only when NOT searching)
                 // ==========================================
                 ->when(!$filter && $month && $year, function ($builder) use ($month, $year) {
-                    return $builder->whereMonth('letter_date', $month)
-                        ->whereYear('letter_date', $year);
+                    return $builder->whereMonth('received_date', $month)
+                        ->whereYear('received_date', $year);
                 })
 
                 ->orderByRaw('CAST(s_no AS UNSIGNED) DESC')
