@@ -19,6 +19,8 @@
                          label="Subject"
                          no-error-icon
                          outlined
+                         autogrow
+                         type="textarea"
                 />
             </div>
 

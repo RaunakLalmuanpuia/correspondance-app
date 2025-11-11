@@ -87,6 +87,8 @@
                          :rules="[
                              val=>!!val || 'Subject is required'
                          ]"
+                         autogrow
+                         type="textarea"
                          bg-color="white"
                          label="Subject"
                          no-error-icon

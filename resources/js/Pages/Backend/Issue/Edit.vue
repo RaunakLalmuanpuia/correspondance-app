@@ -93,6 +93,8 @@
                          label="Subject"
                          no-error-icon
                          outlined
+                         autogrow
+                         type="textarea"
                 />
             </div>
             <div class="col-xs-12 col-sm-6">
