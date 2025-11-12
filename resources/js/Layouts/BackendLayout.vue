@@ -93,11 +93,11 @@
                         </q-item-section>
                     </q-item>
 
-                    <q-item  v-if="isAdmin" v-close-popup clickable @click="$inertia.get(route('role.index'))">
-                        <q-item-section>
-                            <q-item-label>User Roles</q-item-label>
-                        </q-item-section>
-                    </q-item>
+<!--                    <q-item  v-if="isAdmin" v-close-popup clickable @click="$inertia.get(route('role.index'))">-->
+<!--                        <q-item-section>-->
+<!--                            <q-item-label>User Roles</q-item-label>-->
+<!--                        </q-item-section>-->
+<!--                    </q-item>-->
 
                     <q-item v-close-popup clickable @click="$inertia.get(route('profile.edit'))">
                         <q-item-section>
