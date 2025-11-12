@@ -9,7 +9,7 @@ use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\StatisticsController;
-
+use App\Http\Controllers\RoleController;
 
 
 
@@ -99,4 +99,10 @@ Route::group(['middleware'=>'auth','prefix'=>'statistics'], function () {
     Route::get('stat-cards', [StatisticsController::class, 'statCards'])->name('statCards');
     Route::get('bar-chart', [StatisticsController::class, 'barChart'])->name('barChart');
     Route::get('timeline', [StatisticsController::class, 'timeline'])->name('timeline');
+});
+
+Route::group(['middleware'=>'auth','prefix' => 'role'], function () {
+    Route::get('', [RoleController::class, 'index'])->name('role.index');
+    Route::get('{model}', [RoleController::class, 'show'])->name('role.show');
+    Route::put('{model}', [RoleController::class, 'update'])->name('role.update');
 });

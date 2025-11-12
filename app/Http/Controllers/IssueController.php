@@ -23,7 +23,14 @@ class IssueController extends Controller
     {
         $user = $request->user();
         abort_if(!$user->hasPermissionTo('view-issue'), 403, 'Access Denied');
+
+
+
         return inertia('Backend/Issue/Index', [
+            'canView'=> $user->can('view-issue'),
+            'canCreate' => $user->can('create-issue'),
+            'canEdit' => $user->can('edit-issue'),
+            'canDeleteDocument' => $user->can('delete-issue'),
         ]);
     }
 

@@ -10,7 +10,7 @@
             </div>
 
             <div class="flex q-gutter-sm">
-                <q-btn @click="$inertia.get(route('receipts.create'))" color="btn-primary" label="New Receipt"/>
+                <q-btn v-if="canCreate" @click="$inertia.get(route('receipts.create'))" color="btn-primary" label="New Receipt"/>
             </div>
         </div>
         <br/>
@@ -92,13 +92,13 @@
                 <q-td>
                     <q-btn round icon="more_vert">
                         <q-menu>
-                            <q-item clickable @click="openViewDialog(props.row)">
+                            <q-item v-if="canView" clickable @click="openViewDialog(props.row)">
                                 <q-item-section>View Detail</q-item-section>
                             </q-item>
-                            <q-item clickable @click="$inertia.get(route('receipts.edit',props.row.id))">
+                            <q-item v-if="canEdit" clickable @click="$inertia.get(route('receipts.edit',props.row.id))">
                                 <q-item-section>Edit</q-item-section>
                             </q-item>
-                            <q-item clickable @click="handleDelete(props.row)" >
+                            <q-item v-if="canDelete" clickable @click="handleDelete(props.row)" >
                                 <q-item-section>Delete</q-item-section>
                             </q-item>
                         </q-menu>
@@ -198,7 +198,7 @@ import BackendLayout from "@/Layouts/BackendLayout.vue";
 import {useQuasar, date} from "quasar";
 import {router} from "@inertiajs/vue3";
 defineOptions({layout:BackendLayout})
-const props=defineProps(['canCreate','canEdit','canDelete'])
+const props=defineProps(['canView','canCreate','canEdit','canDelete'])
 
 const columns = [
     { name: 's_no', align: 'left', label: 'S. No', field: 's_no', sortable: false },
