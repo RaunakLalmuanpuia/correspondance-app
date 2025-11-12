@@ -30,7 +30,7 @@ class IssueController extends Controller
             'canView'=> $user->can('view-issue'),
             'canCreate' => $user->can('create-issue'),
             'canEdit' => $user->can('edit-issue'),
-            'canDeleteDocument' => $user->can('delete-issue'),
+            'canDelete' => $user->can('delete-issue'),
         ]);
     }
 

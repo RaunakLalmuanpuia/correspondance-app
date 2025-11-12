@@ -25,7 +25,7 @@ class ReceiptController extends Controller
             'canView'=> $user->can('view-receipt'),
             'canCreate' => $user->can('create-receipt'),
             'canEdit' => $user->can('edit-receipt'),
-            'canDeleteDocument' => $user->can('delete-receipt'),
+            'canDelete' => $user->can('delete-receipt'),
         ]);
     }
 
