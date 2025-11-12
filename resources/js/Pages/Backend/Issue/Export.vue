@@ -100,7 +100,7 @@ const exportData = () => {
                 link.click();
                 $q.notify({
                     type: 'positive',
-                    message: "Data Successfully Imported"
+                    message: "Data Successfully Exported"
                 })
             })
             .catch(error => {
