@@ -117,10 +117,10 @@ class IssueController extends Controller
 
         $issue = DB::transaction(function () use ($request) {
 
-            // Lock table to ensure concurrency-safe increment
+            // Cast s_no to integer for proper numeric comparison
             $nextSno = DB::table('issues')
-                ->lockForUpdate()                // Important for concurrency
-                ->max('s_no');
+                ->lockForUpdate()
+                ->max(DB::raw('CAST(s_no AS UNSIGNED)'));
 
             $nextSno = $nextSno ? $nextSno + 1 : 1;
 

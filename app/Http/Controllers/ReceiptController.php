@@ -126,7 +126,7 @@ class ReceiptController extends Controller
             // Lock table rows for sequence generation
             $nextSno = DB::table('receipts')
                 ->lockForUpdate()
-                ->max('s_no');
+                ->max(DB::raw('CAST(s_no AS UNSIGNED)'));
 
             $nextSno = $nextSno ? $nextSno + 1 : 1;
 
