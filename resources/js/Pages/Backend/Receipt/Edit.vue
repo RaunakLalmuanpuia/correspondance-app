@@ -39,14 +39,21 @@
             </div>
 
             <div class="col-xs-12 col-sm-6">
-                <q-input v-model="form.letter_date"
-                         :error="!!form.errors?.letter_date"
-                         :error-message="form.errors?.letter_date?.toString()"
-                         type="date"
-                         bg-color="white"
-                         label="Letter Date"
-                         no-error-icon
-                         outlined
+                <q-input
+                    v-model="letterDateDisplay"
+                    label="Letter Date (DD/MM/YYYY)"
+                    outlined
+                    bg-color="white"
+                    mask="##/##/####"
+                    fill-mask
+                    placeholder="dd/mm/yyyy"
+                    :error="!!form.errors?.letter_date"
+                    :error-message="form.errors?.letter_date?.toString()"
+                    no-error-icon
+                    :rules="[
+                      val => !!val || 'Letter Date is required',
+                      val => isValidDisplayDate(val) || 'The letter date field must be a valid date.'
+                    ]"
                 />
             </div>
 
@@ -127,8 +134,47 @@ const form = useForm({
     name_of_da:props.data?.name_of_da || '',
 
 });
+/* DISPLAY FIELD (dd/mm/yyyy) */
+const letterDateDisplay = ref(
+    formatToDisplay(props.data?.letter_date) // convert for Edit page
+);
+function formatToDisplay(ymd) {
+    if (!ymd) return "";
+    const [y, m, d] = ymd.split("-");
+    return `${d}/${m}/${y}`;
+}
+
+/*
+|-------------------------------------------------------
+| Convert dd/mm/yyyy → yyyy-mm-dd (for backend)
+|-------------------------------------------------------
+*/
+function convertToYMD(displayDate) {
+    if (!displayDate) return null;
+    const [d, m, y] = displayDate.split("/");
+    return `${y}-${m}-${d}`;
+}
+/*
+|-------------------------------------------------------
+| Validate if dd/mm/yyyy is real date
+|-------------------------------------------------------
+*/
+function isValidDisplayDate(val) {
+    if (!val) return false;
+
+    const [d, m, y] = val.split("/");
+    const date = new Date(`${y}-${m}-${d}`);
+
+    return (
+        !isNaN(date.getTime()) &&
+        date.getDate() == d &&
+        date.getMonth() + 1 == m &&
+        date.getFullYear() == y
+    );
+}
 
 const submit = e => {
+    form.letter_date = convertToYMD(letterDateDisplay.value);
     form.transform(data => ({cell_id: data?.cell?.value, ...data}))
         .put(route('receipts.update',props.data.id), {
             preserveState: true,

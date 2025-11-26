@@ -109,14 +109,21 @@
             </div>
 
             <div class="col-xs-12 col-sm-6">
-                <q-input v-model="form.letter_date"
-                         :error="!!form.errors?.letter_date"
-                         :error-message="form.errors?.letter_date?.toString()"
-                         type="date"
-                         bg-color="white"
-                         label="Letter Date"
-                         no-error-icon
-                         outlined
+                <q-input
+                    v-model="letterDateDisplay"
+                    label="Letter Date (DD/MM/YYYY)"
+                    outlined
+                    bg-color="white"
+                    mask="##/##/####"
+                    fill-mask
+                    placeholder="dd/mm/yyyy"
+                    :error="!!form.errors?.letter_date"
+                    :error-message="form.errors?.letter_date?.toString()"
+                    no-error-icon
+                    :rules="[
+                      val => !!val || 'Letter Date is required',
+                      val => isValidDisplayDate(val) || 'The letter date field must be a valid date.'
+                    ]"
                 />
             </div>
             <div class="col-xs-12">
@@ -155,36 +162,59 @@ const props = defineProps(['designated_cells','data'])
 const state = reactive({
     submitting: false
 })
+
+function formatToDisplay(ymd) {
+    if (!ymd) return "";
+    const [y, m, d] = ymd.split("-");
+    return `${d}/${m}/${y}`;
+}
+
+/*
+|-------------------------------------------------------
+| Convert dd/mm/yyyy → yyyy-mm-dd (for backend)
+|-------------------------------------------------------
+*/
+function convertToYMD(displayDate) {
+    if (!displayDate) return null;
+    const [d, m, y] = displayDate.split("/");
+    return `${y}-${m}-${d}`;
+}
+/*
+|-------------------------------------------------------
+| Validate if dd/mm/yyyy is real date
+|-------------------------------------------------------
+*/
+function isValidDisplayDate(val) {
+    if (!val) return false;
+
+    const [d, m, y] = val.split("/");
+    const date = new Date(`${y}-${m}-${d}`);
+
+    return (
+        !isNaN(date.getTime()) &&
+        date.getDate() == d &&
+        date.getMonth() + 1 == m &&
+        date.getFullYear() == y
+    );
+}
+
 const q = useQuasar();
 const form = useForm({
     letter_addressee_main: props.data?.letter_addressee_main || '',
     letter_addressee_copy_to: props.data?.letter_addressee_copy_to || '',
-    // letter_addressee_copy_to: Array.isArray(props.data?.letter_addressee_copy_to)
-    //     ? props.data.letter_addressee_copy_to
-    //     : (props.data?.letter_addressee_copy_to
-    //         ? JSON.parse(props.data.letter_addressee_copy_to)
-    //         : []),
     subject: props.data?.subject || '',
     letter_no: props.data?.letter_no || '',
     letter_date: props.data?.letter_date || '',
     cell: { value: props?.data?.cell_id, label: props?.data?.cell?.name },
 })
-//
-// const newCopyTo = ref('')
-//
-// function addCopyTo() {
-//     const value = newCopyTo.value.trim()
-//     if (value && !form.letter_addressee_copy_to.includes(value)) {
-//         form.letter_addressee_copy_to.push(value)
-//     }
-//     newCopyTo.value = ''
-// }
-//
-// function removeCopyTo(index) {
-//     form.letter_addressee_copy_to.splice(index, 1)
-// }
+
+/* DISPLAY FIELD (dd/mm/yyyy) */
+const letterDateDisplay = ref(
+    formatToDisplay(props.data?.letter_date) // convert for Edit page
+);
 
 const submit = e => {
+    form.letter_date = convertToYMD(letterDateDisplay.value);
     form.transform(data => ({cell_id: data?.cell?.value, ...data}))
         .put(route('issues.update',props.data.id), {
             preserveState: true,

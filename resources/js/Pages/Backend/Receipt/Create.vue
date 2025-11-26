@@ -39,17 +39,21 @@
             </div>
 
             <div class="col-xs-12 col-sm-6">
-                <q-input v-model="form.letter_date"
-                         :error="!!form.errors?.letter_date"
-                         :error-message="form.errors?.letter_date?.toString()"
-                         :rules="[
-                             val=>!!val || 'Letter Date is required'
-                         ]"
-                         type="date"
-                         bg-color="white"
-                         label="Letter Date"
-                         no-error-icon
-                         outlined
+                <q-input
+                    v-model="letterDateDisplay"
+                    label="Letter Date (DD/MM/YYYY)"
+                    outlined
+                    bg-color="white"
+                    mask="##/##/####"
+                    fill-mask
+                    placeholder="dd/mm/yyyy"
+                    :error="!!form.errors?.letter_date"
+                    :error-message="form.errors?.letter_date?.toString()"
+                    no-error-icon
+                    :rules="[
+                    val => !!val || 'Letter Date is required',
+                    val => isValidDisplayDate(val) || 'The letter date field must be a valid date.'
+                  ]"
                 />
             </div>
 
@@ -130,8 +134,30 @@ const form = useForm({
     name_of_da:'',
 
 });
+// DISPLAY VALUE (dd/mm/yyyy)
+const letterDateDisplay = ref("");
+/* Validate dd/mm/yyyy */
+function isValidDisplayDate(val) {
+    if (!val) return false;
+    const [d, m, y] = val.split("/");
+    const date = new Date(`${y}-${m}-${d}`);
+    return (
+        !isNaN(date.getTime()) &&
+        date.getDate() == d &&
+        date.getMonth() + 1 == m &&
+        date.getFullYear() == y
+    );
+}
 
+/* Convert dd/mm/yyyy → yyyy-mm-dd before submit */
+function convertToYMD() {
+    if (!letterDateDisplay.value) return null;
+
+    const [d, m, y] = letterDateDisplay.value.split("/");
+    return `${y}-${m}-${d}`;
+}
 const submit = e => {
+    form.letter_date = convertToYMD();
     form.transform(data => ({cell_id: data?.cell?.value, ...data}))
         .post(route('receipts.store'), {
             preserveState: true,
