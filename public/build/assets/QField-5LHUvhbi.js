@@ -1,0 +1,1 @@
+import{C as e,D as t,ag as s,L as a,G as r}from"./app-WZ1ru_N_.js";const l=e({name:"QField",inheritAttrs:!1,props:{...s,tag:{type:String,default:"label"}},emits:t,setup(){return a(r({tagProp:!0}))}});export{l as Q};
