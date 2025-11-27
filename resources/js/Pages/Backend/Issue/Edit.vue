@@ -114,17 +114,40 @@
                     label="Letter Date (DD/MM/YYYY)"
                     outlined
                     bg-color="white"
-                    mask="##/##/####"
-                    fill-mask
-                    placeholder="dd/mm/yyyy"
+                    readonly
                     :error="!!form.errors?.letter_date"
                     :error-message="form.errors?.letter_date?.toString()"
                     no-error-icon
-                    :rules="[
-                      val => !!val || 'Letter Date is required',
-                      val => isValidDisplayDate(val) || 'The letter date field must be a valid date.'
-                    ]"
-                />
+                    @click="popupRef.show()"
+                >
+                    <template #append>
+                        <q-icon name="event" class="cursor-pointer">
+                            <q-popup-proxy ref="popupRef" cover transition-show="scale" transition-hide="scale">
+                                <q-date
+                                    v-model="form.letter_date"
+                                    mask="YYYY-MM-DD"
+                                    @update:model-value="updateLetterDate"
+                                />
+                            </q-popup-proxy>
+                        </q-icon>
+                    </template>
+                </q-input>
+<!--                <q-input-->
+<!--                    v-model="letterDateDisplay"-->
+<!--                    label="Letter Date (DD/MM/YYYY)"-->
+<!--                    outlined-->
+<!--                    bg-color="white"-->
+<!--                    mask="##/##/####"-->
+<!--                    fill-mask-->
+<!--                    placeholder="dd/mm/yyyy"-->
+<!--                    :error="!!form.errors?.letter_date"-->
+<!--                    :error-message="form.errors?.letter_date?.toString()"-->
+<!--                    no-error-icon-->
+<!--                    :rules="[-->
+<!--                      val => !!val || 'Letter Date is required',-->
+<!--                      val => isValidDisplayDate(val) || 'The letter date field must be a valid date.'-->
+<!--                    ]"-->
+<!--                />-->
             </div>
             <div class="col-xs-12">
                 <q-select v-model="form.cell"
@@ -162,42 +185,7 @@ const props = defineProps(['designated_cells','data'])
 const state = reactive({
     submitting: false
 })
-
-function formatToDisplay(ymd) {
-    if (!ymd) return "";
-    const [y, m, d] = ymd.split("-");
-    return `${d}/${m}/${y}`;
-}
-
-/*
-|-------------------------------------------------------
-| Convert dd/mm/yyyy → yyyy-mm-dd (for backend)
-|-------------------------------------------------------
-*/
-function convertToYMD(displayDate) {
-    if (!displayDate) return null;
-    const [d, m, y] = displayDate.split("/");
-    return `${y}-${m}-${d}`;
-}
-/*
-|-------------------------------------------------------
-| Validate if dd/mm/yyyy is real date
-|-------------------------------------------------------
-*/
-function isValidDisplayDate(val) {
-    if (!val) return false;
-
-    const [d, m, y] = val.split("/");
-    const date = new Date(`${y}-${m}-${d}`);
-
-    return (
-        !isNaN(date.getTime()) &&
-        date.getDate() == d &&
-        date.getMonth() + 1 == m &&
-        date.getFullYear() == y
-    );
-}
-
+const popupRef = ref(null)
 const q = useQuasar();
 const form = useForm({
     letter_addressee_main: props.data?.letter_addressee_main || '',
@@ -209,12 +197,19 @@ const form = useForm({
 })
 
 /* DISPLAY FIELD (dd/mm/yyyy) */
-const letterDateDisplay = ref(
-    formatToDisplay(props.data?.letter_date) // convert for Edit page
-);
+const letterDateDisplay = ref(formatDMY(props.data?.letter_date));
 
+
+function formatDMY(iso) {
+    if (!iso) return "";
+    const [y, m, d] = iso.split("-");
+    return `${d}/${m}/${y}`;
+}
+
+function updateLetterDate(val) {
+    letterDateDisplay.value = formatDMY(val);
+}
 const submit = e => {
-    form.letter_date = convertToYMD(letterDateDisplay.value);
     form.transform(data => ({cell_id: data?.cell?.value, ...data}))
         .put(route('issues.update',props.data.id), {
             preserveState: true,

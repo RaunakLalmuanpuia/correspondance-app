@@ -44,17 +44,45 @@
                     label="Letter Date (DD/MM/YYYY)"
                     outlined
                     bg-color="white"
-                    mask="##/##/####"
-                    fill-mask
-                    placeholder="dd/mm/yyyy"
-                    :error="!!form.errors?.letter_date"
-                    :error-message="form.errors?.letter_date?.toString()"
+                    readonly
                     no-error-icon
-                    :rules="[
-                    val => !!val || 'Letter Date is required',
-                    val => isValidDisplayDate(val) || 'The letter date field must be a valid date.'
-                  ]"
-                />
+                    @click="popupRef.show()"
+                >
+                    <template #append>
+                        <q-icon name="event" class="cursor-pointer" />
+
+                        <q-popup-proxy
+                            ref="popupRef"
+                            cover
+                            transition-show="scale"
+                            transition-hide="scale"
+                        >
+                            <q-date
+                                v-model="form.letter_date"
+                                mask="YYYY-MM-DD"
+                                @update:model-value="updateLetterDate"
+                            />
+                        </q-popup-proxy>
+                    </template>
+                </q-input>
+
+
+                <!--                <q-input-->
+<!--                    v-model="letterDateDisplay"-->
+<!--                    label="Letter Date (DD/MM/YYYY)"-->
+<!--                    outlined-->
+<!--                    bg-color="white"-->
+<!--                    mask="##/##/####"-->
+<!--                    fill-mask-->
+<!--                    placeholder="dd/mm/yyyy"-->
+<!--                    :error="!!form.errors?.letter_date"-->
+<!--                    :error-message="form.errors?.letter_date?.toString()"-->
+<!--                    no-error-icon-->
+<!--                    :rules="[-->
+<!--                    val => !!val || 'Letter Date is required',-->
+<!--                    val => isValidDisplayDate(val) || 'The letter date field must be a valid date.'-->
+<!--                  ]"-->
+<!--                />-->
             </div>
 
             <div class="col-xs-12">
@@ -125,6 +153,7 @@ defineProps(['designated_cells'])
 const state = reactive({
     submitting: false
 })
+const popupRef = ref(null)
 const form = useForm({
     subject: '',
     letter_no: '',
@@ -136,28 +165,18 @@ const form = useForm({
 });
 // DISPLAY VALUE (dd/mm/yyyy)
 const letterDateDisplay = ref("");
-/* Validate dd/mm/yyyy */
-function isValidDisplayDate(val) {
-    if (!val) return false;
-    const [d, m, y] = val.split("/");
-    const date = new Date(`${y}-${m}-${d}`);
-    return (
-        !isNaN(date.getTime()) &&
-        date.getDate() == d &&
-        date.getMonth() + 1 == m &&
-        date.getFullYear() == y
-    );
+
+function formatDMY(iso) {
+    if (!iso) return "";
+    const [y, m, d] = iso.split("-");
+    return `${d}/${m}/${y}`;
 }
 
-/* Convert dd/mm/yyyy → yyyy-mm-dd before submit */
-function convertToYMD() {
-    if (!letterDateDisplay.value) return null;
-
-    const [d, m, y] = letterDateDisplay.value.split("/");
-    return `${y}-${m}-${d}`;
+function updateLetterDate(val) {
+    letterDateDisplay.value = formatDMY(val);
 }
 const submit = e => {
-    form.letter_date = convertToYMD();
+    // form.letter_date = convertToYMD();
     form.transform(data => ({cell_id: data?.cell?.value, ...data}))
         .post(route('receipts.store'), {
             preserveState: true,
