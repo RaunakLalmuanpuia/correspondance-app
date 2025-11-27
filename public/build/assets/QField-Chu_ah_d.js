@@ -1,0 +1,1 @@
+import{v as e,M as t,aj as s,U as a,O as r}from"./app-DC8lp303.js";const l=e({name:"QField",inheritAttrs:!1,props:{...s,tag:{type:String,default:"label"}},emits:t,setup(){return a(r({tagProp:!0}))}});export{l as Q};
